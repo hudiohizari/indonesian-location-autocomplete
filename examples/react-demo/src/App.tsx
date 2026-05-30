@@ -8,7 +8,9 @@
 import { useState, useEffect } from 'react'
 import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
 import type { LocationRecord } from '@indonesian-location-autocomplete/react'
-import postcodeData from '@indonesian-location-autocomplete/core/data'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
 interface PreviewState {
   value: string
@@ -371,14 +373,13 @@ function App() {
             <div style={{ marginBottom: 24 }}>
               <IndonesianLocationAutocomplete
                 value={themes.default.value}
-                data={postcodeData}
                 onQueryChange={(q) => updateThemeState('default', q, null)}
                 onLocationSelect={(loc) => updateThemeState('default', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
               />
             </div>
             <p className="style-hint">
-              Neutral color styling that naturally blends into clean modern light-themed applications.
+              Neutral color styling that naturally blends into clean modern light-themed applications. Uses the built-in pre-bundled postcode dataset by default.
             </p>
           </div>
 
@@ -392,7 +393,6 @@ function App() {
               <IndonesianLocationAutocomplete
                 containerClassName="theme-dark"
                 value={themes.dark.value}
-                data={postcodeData}
                 onQueryChange={(q) => updateThemeState('dark', q, null)}
                 onLocationSelect={(loc) => updateThemeState('dark', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
@@ -413,7 +413,6 @@ function App() {
               <IndonesianLocationAutocomplete
                 containerClassName="theme-emerald"
                 value={themes.emerald.value}
-                data={postcodeData}
                 onQueryChange={(q) => updateThemeState('emerald', q, null)}
                 onLocationSelect={(loc) => updateThemeState('emerald', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
@@ -434,7 +433,6 @@ function App() {
               <IndonesianLocationAutocomplete
                 containerClassName="theme-minimal"
                 value={themes.minimal.value}
-                data={postcodeData}
                 onQueryChange={(q) => updateThemeState('minimal', q, null)}
                 onLocationSelect={(loc) => updateThemeState('minimal', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
@@ -454,7 +452,6 @@ function App() {
             <div style={{ marginBottom: 24 }}>
               <IndonesianLocationAutocomplete
                 value={themes.customEmpty.value}
-                data={postcodeData}
                 onQueryChange={(q) => updateThemeState('customEmpty', q, null)}
                 onLocationSelect={(loc) => updateThemeState('customEmpty', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Type invalid name (e.g. xyz)...' }}
@@ -497,7 +494,6 @@ function App() {
             <div style={{ marginBottom: 24 }}>
               <IndonesianLocationAutocomplete
                 value={themes.filtered.value}
-                data={postcodeData}
                 onQueryChange={(q) => updateThemeState('filtered', q, null)}
                 onLocationSelect={(loc) => updateThemeState('filtered', formatLocation(loc), loc)}
                 texts={{ placeholder: `Search within ${selectedProvince}...` }}
@@ -546,7 +542,7 @@ function App() {
               />
             </div>
             <p className="style-hint">
-              Bypasses the 15MB local JSON database entirely. Fires query callback and renders controlled results/loader state directly.
+              Bypasses the 15MB local JSON database entirely. Fires query callback and renders controlled results/loader state directly. You can install `@indonesian-location-autocomplete/core` directly on your server to handle heavy search logic.
             </p>
           </div>
         </div>

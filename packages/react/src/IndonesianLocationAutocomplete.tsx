@@ -10,7 +10,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { searchLocations } from '@indonesian-location-autocomplete/core'
 import type { LocationRecord, SearchOptions } from '@indonesian-location-autocomplete/core'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
 import styles from './IndonesianLocationAutocomplete.module.css'
+
+const defaultPostcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
 /** Props for customizing displayed text (i18n support). */
 export interface AutocompleteTexts {
@@ -27,7 +30,7 @@ export interface IndonesianLocationAutocompleteProps {
   onLocationSelect: (location: LocationRecord) => void
   /** Called on every keystroke with the raw query string. */
   onQueryChange?: (query: string) => void
-  /** The full postcode dataset to search over. Not required if using searchResults directly. */
+  /** The full postcode dataset to search over. Defaults to the pre-bundled dataset. */
   data?: LocationRecord[]
   /** Pre-filtered search results for controlled remote search. Bypasses internal search engine. */
   searchResults?: LocationRecord[]
@@ -64,18 +67,18 @@ export interface IndonesianLocationAutocompleteProps {
 }
 
 /**
- * A fully local Indonesian location autocomplete component for React.
+ * A fully customizable Indonesian location autocomplete component for React.
  *
  * Searches the provided postcode dataset in-browser with debounced
- * multi-term matching. Supports keyboard navigation, click-outside
- * dismissal, and full i18n customization. Can also be controlled
- * externally via searchResults/isLoading for custom database or API search.
+ * multi-term matching. Defaults to the pre-bundled 15.7MB database.
+ * Supports keyboard navigation, click-outside dismissal, and full i18n customization.
+ * Can also be controlled externally via searchResults/isLoading for custom database or API search.
  */
-export default function IndonesianLocationAutocomplete({
+export function IndonesianLocationAutocomplete({
   value,
   onLocationSelect,
   onQueryChange,
-  data,
+  data = defaultPostcodeData,
   searchResults,
   isLoading,
   debounceMs = 300,
@@ -348,3 +351,5 @@ export default function IndonesianLocationAutocomplete({
     </div>
   )
 }
+
+export default IndonesianLocationAutocomplete

@@ -23,8 +23,7 @@ indonesian-location-autocomplete/
 │   │       ├── index.ts       # Shared logic (debounced search engine)
 │   │       └── data/
 │   │           └── indonesia-postcodes.json # Raw postcode database
-│   ├── react/                 # React JS UI implementation
-│   ├── react-native/          # React Native mobile implementation
+│   ├── react/                 # React JS & React Native UI implementation
 │   ├── android/               # Kotlin Jetpack Compose library
 │   └── ios/                   # Swift / SwiftUI library package
 └── examples/
@@ -72,11 +71,13 @@ To guarantee that this library works flawlessly on **every single platform** wit
 ### 1. React Web Component
 
 #### Installation
+
 ```bash
 npm install @indonesian-location-autocomplete/core @indonesian-location-autocomplete/react
 ```
 
 #### API Props Reference
+
 - `value: string` (Required) - Controlled input value.
 - `onLocationSelect: (location: LocationRecord) => void` (Required) - Invoked when selection occurs.
 - `onQueryChange?: (query: string) => void` (Optional) - Invoked on input query keystrokes.
@@ -99,13 +100,34 @@ npm install @indonesian-location-autocomplete/core @indonesian-location-autocomp
 
 #### Presets & Usecases Examples
 
-##### A. Standard Local JSON Search Mode
+##### A. Zero-Configuration Pre-Bundled Component (Instant Setup)
+If you want a robust, out-of-the-box local autocomplete component without importing or managing the postcode dataset manually:
 ```tsx
 import { useState } from 'react'
 import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeData from '@indonesian-location-autocomplete/core/data'
 
-function StandardSearch() {
+function EasySearch() {
+  const [value, setValue] = useState('')
+  return (
+    <IndonesianLocationAutocomplete
+      value={value}
+      onQueryChange={setValue}
+      onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
+    />
+  )
+}
+```
+
+##### B. Custom Local JSON Search Mode (Flexible Loading)
+```tsx
+import { useState } from 'react'
+import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+
+function CustomSearch() {
   const [value, setValue] = useState('')
   return (
     <IndonesianLocationAutocomplete
@@ -118,11 +140,14 @@ function StandardSearch() {
 }
 ```
 
-##### B. Dynamic Parent Filtering (Chained Dropdowns)
+##### C. Dynamic Parent Filtering (Chained Dropdowns)
 ```tsx
 import { useState } from 'react'
 import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeData from '@indonesian-location-autocomplete/core/data'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
 function ChainedDropdowns() {
   const [value, setValue] = useState('')
@@ -142,7 +167,11 @@ function ChainedDropdowns() {
 }
 ```
 
-##### C. Controlled Remote API Search (Zero 15MB file loads in browser)
+##### D. Controlled Remote API Search (Zero 15MB file loads in browser)
+
+> [!TIP]
+> To minimize your client bundle size, you can install `@indonesian-location-autocomplete/core` directly on your server/backend (Node.js, Bun, Deno). Your backend API can import `searchLocations` and query the raw JSON database, allowing you to feed results to the frontend via `searchResults` without sending the 15MB database to the browser.
+
 ```tsx
 import { useState, useEffect } from 'react'
 import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
@@ -175,7 +204,8 @@ function RemoteAPISearch() {
 }
 ```
 
-##### D. Visual Styling Customizations via CSS variables
+##### E. Visual Styling Customizations via CSS variables
+
 ```css
 /* Customize your app stylesheet using clean fallback tokens */
 .my-custom-input {
@@ -189,14 +219,171 @@ function RemoteAPISearch() {
 
 ---
 
-### 2. Android Jetpack Compose Component
+### 2. React Native Component
 
 #### Installation
+
+```bash
+npm install @indonesian-location-autocomplete/core @indonesian-location-autocomplete/react
+```
+
+> [!TIP]
+> **TypeScript Configuration:**
+> To ensure the standard TypeScript compiler (`tsc`) correctly prioritizes React Native `.native.tsx` source exports over Web `.tsx` source exports, add `"moduleSuffixes": [".native", ""]` to your React Native project's `tsconfig.json` compilerOptions:
+>
+> ```json
+> {
+>   "compilerOptions": {
+>     "moduleSuffixes": [".native", ""]
+>   }
+> }
+> ```
+
+#### API Props Reference
+
+- `value: string` (Required) - Controlled input query value.
+- `onLocationSelect: (location: LocationRecord) => void` (Required) - Invoked when selection occurs.
+- `onQueryChange?: (query: string) => void` (Optional) - Invoked on input query keystrokes.
+- `data?: LocationRecord[]` (Optional) - Postcode database. (Optional when using `searchResults`).
+- `searchResults?: LocationRecord[]` (Optional) - Controlled pre-filtered search results (perfect for off-thread SQLite/API querying).
+- `isLoading?: boolean` (Optional) - Controlled loading spinner trigger.
+- `debounceMs?: number` (Optional) - Delay in ms. Default is `300`.
+- `searchOptions?: SearchOptions` (Optional) - Includes `maxResults`, `minQueryLength`, and a custom callback `filter: (loc: LocationRecord) => boolean` to restrict query suggestions dynamically.
+- `texts?: { placeholder?: string; noResults?: string }` (Optional) - Custom translations.
+- `leadingIcon?: React.ReactNode` (Optional) - Custom input icon. Set to `null` to hide.
+- `loaderContent?: React.ReactNode` (Optional) - Custom loading content component. Set to `null` to hide.
+- `renderItem?: (loc: LocationRecord, index: number, active: boolean) => React.ReactNode` (Optional) - Custom suggestion item layout builder.
+- `renderEmptyState?: (query: string) => React.ReactNode` (Optional) - Custom empty state layout builder.
+- `formatSelectedLocation?: (loc: LocationRecord) => string` (Optional) - Format value mapping upon selection.
+- `disabled?: boolean` (Optional) - Whether the input is disabled. Default is `false`.
+
+**React Native Specific Style Props:**
+
+- `style?: StyleProp<ViewStyle>` - Styles applied to the main wrapper View.
+- `inputWrapperStyle?: StyleProp<ViewStyle>` - Styles applied to the input wrapper View (holds TextInput, leading icon, and loader).
+- `inputStyle?: StyleProp<TextStyle>` - Styles applied to the TextInput element.
+- `dropdownStyle?: StyleProp<ViewStyle>` - Styles applied to the dropdown container.
+- `itemStyle?: StyleProp<ViewStyle>` - Styles applied to the individual list item TouchableOpacity container.
+- `itemTextStyle?: StyleProp<TextStyle>` - Styles applied to the primary suggestion text.
+- `itemSubTextStyle?: StyleProp<TextStyle>` - Styles applied to the secondary suggestion subtext.
+- `emptyStyle?: StyleProp<ViewStyle>` - Styles applied to the empty list result wrapper.
+- `emptyTextStyle?: StyleProp<TextStyle>` - Styles applied to the empty state text.
+
+#### Presets & Usecases Examples
+
+##### A. Zero-Configuration Pre-Bundled Component (Instant Setup)
+If you want a robust, out-of-the-box local autocomplete component without importing or managing the postcode dataset manually:
+```tsx
+import { useState } from 'react'
+import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+
+function EasySearch() {
+  const [value, setValue] = useState('')
+  return (
+    <IndonesianLocationAutocomplete
+      value={value}
+      onQueryChange={setValue}
+      onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
+    />
+  )
+}
+```
+
+##### B. Custom Search (Local JSON Data - Flexible Loading)
+```tsx
+import { useState } from 'react'
+import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+
+function CustomSearch() {
+  const [value, setValue] = useState('')
+  return (
+    <IndonesianLocationAutocomplete
+      value={value}
+      data={postcodeData}
+      onQueryChange={setValue}
+      onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
+    />
+  )
+}
+```
+
+##### C. Dynamic Parent Filtering (Chained Dropdowns)
+```tsx
+import { useState } from 'react'
+import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+
+function ChainedDropdowns() {
+  const [value, setValue] = useState('')
+  const [selectedProvince] = useState('DKI Jakarta')
+
+  return (
+    <IndonesianLocationAutocomplete
+      value={value}
+      data={postcodeData}
+      onQueryChange={setValue}
+      onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
+      searchOptions={{
+        filter: (loc) => loc.province === selectedProvince
+      }}
+    />
+  )
+}
+```
+
+##### D. Custom Styling (Dark Mode Accent)
+```tsx
+import { useState } from 'react'
+import { StyleSheet } from 'react-native'
+import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+
+function DarkModeSearch() {
+  const [value, setValue] = useState('')
+  return (
+    <IndonesianLocationAutocomplete
+      value={value}
+      data={postcodeData}
+      onQueryChange={setValue}
+      onLocationSelect={(loc) => setValue(loc.village)}
+      inputWrapperStyle={styles.wrapper}
+      inputStyle={styles.input}
+      dropdownStyle={styles.dropdown}
+      itemTextStyle={styles.itemText}
+    />
+  )
+}
+
+const styles = StyleSheet.create({
+  wrapper: { backgroundColor: '#1e293b', borderColor: '#475569' },
+  input: { color: '#f8fafc' },
+  dropdown: { backgroundColor: '#1e293b', borderColor: '#475569' },
+  itemText: { color: '#f8fafc' }
+})
+```
+
+---
+
+### 3. Android Jetpack Compose Component
+
+#### Installation
+
 ```kotlin
 implementation("id.my.hizari.indonesianlocation:autocomplete:1.0.0")
 ```
 
 #### API Parameters Reference
+
 - `value: String` (Required) - Controlled query.
 - `onQueryChange: (String) -> Unit` (Required) - Keystroke callback.
 - `onLocationSelect: (LocationRecord) -> Unit` (Required) - Selection callback.
@@ -219,6 +406,7 @@ implementation("id.my.hizari.indonesianlocation:autocomplete:1.0.0")
 #### Presets & Usecases Examples
 
 ##### A. Standard Search
+
 ```kotlin
 val searchEngine = remember { LocationSearchEngine(context) }
 var query by remember { mutableStateOf("") }
@@ -232,6 +420,7 @@ IndonesianLocationAutocomplete(
 ```
 
 ##### B. Dynamic Parent Filter
+
 ```kotlin
 val searchEngine = remember { LocationSearchEngine(context) }
 var query by remember { mutableStateOf("") }
@@ -247,6 +436,7 @@ IndonesianLocationAutocomplete(
 ```
 
 ##### C. Custom Search Provider (Room / Background API Querying)
+
 ```kotlin
 var query by remember { mutableStateOf("") }
 
@@ -266,10 +456,10 @@ IndonesianLocationAutocomplete(
 ## Tested & Supported Platforms
 
 - [x] React 18+ / React 19 (Web)
-- [ ] React Native (Android)
-- [ ] React Native (iOS)
+- [x] React Native (Android)
+- [x] React Native (iOS)
 - [x] Android Jetpack Compose (Kotlin 1.9+, Android SDK 24+)
-- [ ] iOS SwiftUI (iOS 15+, Swift 5.9+) - Future Roadmap
+- [ ] iOS SwiftUI (iOS 15+, Swift 5.9+)
 
 ## Distribution & Publishing Targets
 
@@ -280,8 +470,7 @@ To ensure simple installation across different tech stacks, native packages are 
 
 ## Library Deployment Status
 
-- [ ] `@indonesian-location-autocomplete/react` (npm)
-- [ ] `@indonesian-location-autocomplete/react-native` (npm)
+- [x] `@indonesian-location-autocomplete/react` (npm - Unified Web & React Native)
 - [ ] `com.github.indonesian-location-autocomplete` (Maven Central / JitPack)
 
 ---
@@ -290,17 +479,13 @@ To ensure simple installation across different tech stacks, native packages are 
 
 ### 1. React & React Native (npm)
 
-We build to ES modules and CommonJS and publish to npm:
+We publish the unified React & React Native package directly to npm:
 
-1. Build the package:
-   ```bash
-   npm run build --workspace=packages/react
-   ```
-2. Log in and publish:
+1. Log in to npm:
    ```bash
    npm login
    ```
-3. Publish the packages:
+2. Publish the package:
    ```bash
    npm publish --workspace=packages/react --access public
    ```
@@ -312,7 +497,6 @@ Android packages are distributed via JitPack for streamlined GitHub release tag 
 1. Apply the `maven-publish` plugin in `packages/android/build.gradle`.
 2. Configure a `jitpack.yml` at the root of the project if specific JDK versions are required.
 3. Publish by creating a new GitHub Release.
-
 
 ---
 

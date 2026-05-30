@@ -11,7 +11,10 @@
     "bootstrap": "npm install",
     "test": "vitest run",
     "dev:react-demo": "npm run dev --workspace=examples/react-demo",
-    "build:react-demo": "npm run build --workspace=examples/react-demo"
+    "build:react-demo": "npm run build --workspace=examples/react-demo",
+    "start:react-native-demo": "npm run start --workspace=examples/react-native-demo",
+    "start:react-native-demo:lan": "npm run start:lan --workspace=examples/react-native-demo",
+    "start:react-native-demo:tunnel": "npm run start:tunnel --workspace=examples/react-native-demo"
   },
   "devDependencies": {
     "vitest": "^1.6.0"
@@ -27,5 +30,9 @@
     "composable"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  }
 }
