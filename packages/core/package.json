@@ -1,0 +1,23 @@
+{
+  "name": "@indonesian-location-autocomplete/core",
+  "version": "1.0.0",
+  "description": "Core search engine and data types for Indonesian location autocomplete",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./data": "./data/indonesia-postcodes.json"
+  },
+  "files": [
+    "src",
+    "data"
+  ],
+  "keywords": [
+    "indonesia",
+    "location",
+    "autocomplete",
+    "postcode",
+    "search"
+  ],
+  "license": "MIT"
+}
