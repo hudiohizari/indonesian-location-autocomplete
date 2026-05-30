@@ -27,10 +27,11 @@ jobs:
       - name: Run Core Unit Tests
         run: npm test
 
-      - name: Typecheck Workspaces
-        run: |
-          npx tsc --noEmit --workspace=packages/core
-          npx tsc --noEmit --workspace=packages/react
+      - name: Typecheck Core Package
+        run: cd packages/core && npx tsc --noEmit
+
+      - name: Typecheck React Package
+        run: cd packages/react && npx tsc --noEmit
 
       - name: Build React Web Demo
         run: npm run build:react-demo
@@ -50,7 +51,21 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Build Android Library with Gradle
-        run: |
-          cd packages/android
-          gradle build --no-daemon
+      - name: Set up Gradle 8.2
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.2'
+
+      - name: Build Android Library
+        run: gradle build --no-daemon --project-dir packages/android
+
+  ios-ci:
+    name: iOS CI (SwiftUI Package)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build and Test Swift Package
+        run: swift test --package-path packages/ios

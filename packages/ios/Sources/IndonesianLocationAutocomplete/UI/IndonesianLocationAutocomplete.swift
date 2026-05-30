@@ -18,7 +18,7 @@ public struct AutocompleteTexts {
 }
 
 public struct IndonesianLocationAutocomplete: View {
-    @Binding var value: String
+    @Binding public var value: String
     public var onQueryChange: (String) -> Void
     public var onLocationSelect: (LocationRecord) -> Void
 
@@ -82,14 +82,14 @@ public struct IndonesianLocationAutocomplete: View {
                     .font(.body)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
-                    .onChange(of: query) { newValue in
+                    .onChange(of: query) { _, newValue in
                         onQueryChange(newValue)
                         triggerSearch(query: newValue)
                     }
                     .onAppear {
                         query = value
                     }
-                    .onChange(of: value) { newValue in
+                    .onChange(of: value) { _, newValue in
                         if !isOpen {
                             query = newValue
                         }

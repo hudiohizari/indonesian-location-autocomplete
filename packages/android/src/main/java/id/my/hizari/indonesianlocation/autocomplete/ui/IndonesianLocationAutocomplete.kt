@@ -73,12 +73,19 @@ fun IndonesianLocationAutocomplete(
     filter: ((LocationRecord) -> Boolean)? = null,
     searchProvider: (suspend (String) -> List<LocationRecord>)? = null
 ) {
-    var query by remember(value) { mutableStateOf(value) }
+    var query by remember { mutableStateOf(value) }
     var results by remember { mutableStateOf<List<LocationRecord>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
     var isOpen by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
+
+    // Sync external value changes only when dropdown is closed (mirrors React behavior)
+    LaunchedEffect(value) {
+        if (!isOpen) {
+            query = value
+        }
+    }
 
     // Flow representing manual keystroke search queries
     val searchFlow = remember {

@@ -29,8 +29,8 @@ jobs:
       - name: Run Core Tests & Validation
         run: |
           npm test
-          npx tsc --noEmit --workspace=packages/core
-          npx tsc --noEmit --workspace=packages/react
+          cd packages/core && npx tsc --noEmit && cd ../..
+          cd packages/react && npx tsc --noEmit && cd ../..
 
       - name: Publish Core Package
         run: npm publish --workspace=packages/core --access public
@@ -66,15 +66,15 @@ jobs:
       - name: Run Core Tests & Validation
         run: |
           npm test
-          npx tsc --noEmit --workspace=packages/core
-          npx tsc --noEmit --workspace=packages/react
+          cd packages/core && npx tsc --noEmit && cd ../..
+          cd packages/react && npx tsc --noEmit && cd ../..
 
       - name: Publish Core Package to GPR
-        run: npm publish --workspace=packages/core
+        run: npm publish --workspace=packages/core --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish React Package to GPR
-        run: npm publish --workspace=packages/react
+        run: npm publish --workspace=packages/react --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
