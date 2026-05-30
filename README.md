@@ -393,7 +393,7 @@ dependencyResolutionManagement {
 
 2. Add the dependency to your app's `build.gradle.kts`:
 ```kotlin
-implementation("com.github.hudiohizari:indonesian-location-autocomplete-android:v1.0.0")
+implementation("com.github.hudiohizari:indonesian-location-autocomplete:v1.0.0")
 ```
 
 #### API Parameters Reference
