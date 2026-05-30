@@ -26,6 +26,14 @@
   "dependencies": {
     "@hudiohizari/indonesian-location-autocomplete-core": "1.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hudiohizari/indonesian-location-autocomplete.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hudiohizari/indonesian-location-autocomplete/issues"
+  },
+  "homepage": "https://github.com/hudiohizari/indonesian-location-autocomplete#readme",
   "keywords": [
     "indonesia",
     "location",

@@ -41,3 +41,40 @@ jobs:
         run: npm publish --workspace=packages/react --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-gpr:
+    name: Publish to GitHub Package Registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@hudiohizari'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Core Tests & Validation
+        run: |
+          npm test
+          npx tsc --noEmit --workspace=packages/core
+          npx tsc --noEmit --workspace=packages/react
+
+      - name: Publish Core Package to GPR
+        run: npm publish --workspace=packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish React Package to GPR
+        run: npm publish --workspace=packages/react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

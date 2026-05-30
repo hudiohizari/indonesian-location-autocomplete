@@ -12,6 +12,14 @@
     "src",
     "data"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hudiohizari/indonesian-location-autocomplete.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hudiohizari/indonesian-location-autocomplete/issues"
+  },
+  "homepage": "https://github.com/hudiohizari/indonesian-location-autocomplete#readme",
   "keywords": [
     "indonesia",
     "location",
