@@ -82,7 +82,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.hudiohizari"
             artifactId = "indonesian-location-autocomplete"
-            version = project.findProperty("version")?.toString() ?: "1.0.0"
+            version = System.getenv("VERSION") ?: (project.findProperty("version")?.toString()?.takeIf { it != "unspecified" } ?: "1.0.0")
 
             afterEvaluate {
                 from(components["release"])
