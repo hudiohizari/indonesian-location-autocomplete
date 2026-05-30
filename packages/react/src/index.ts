@@ -12,4 +12,4 @@ export type {
 } from './IndonesianLocationAutocomplete'
 
 // Re-export core types for convenience
-export type { LocationRecord, SearchOptions } from '@indonesian-location-autocomplete/core'
+export type { LocationRecord, SearchOptions } from '@hudiohizari/indonesian-location-autocomplete-core'

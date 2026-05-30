@@ -73,7 +73,7 @@ To guarantee that this library works flawlessly on **every single platform** wit
 #### Installation
 
 ```bash
-npm install @indonesian-location-autocomplete/core @indonesian-location-autocomplete/react
+npm install @hudiohizari/indonesian-location-autocomplete-core @hudiohizari/indonesian-location-autocomplete
 ```
 
 #### API Props Reference
@@ -104,7 +104,7 @@ npm install @indonesian-location-autocomplete/core @indonesian-location-autocomp
 If you want a robust, out-of-the-box local autocomplete component without importing or managing the postcode dataset manually:
 ```tsx
 import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
 
 function EasySearch() {
   const [value, setValue] = useState('')
@@ -121,9 +121,9 @@ function EasySearch() {
 ##### B. Custom Local JSON Search Mode (Flexible Loading)
 ```tsx
 import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
-import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
@@ -143,9 +143,9 @@ function CustomSearch() {
 ##### C. Dynamic Parent Filtering (Chained Dropdowns)
 ```tsx
 import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
-import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
@@ -170,11 +170,11 @@ function ChainedDropdowns() {
 ##### D. Controlled Remote API Search (Zero 15MB file loads in browser)
 
 > [!TIP]
-> To minimize your client bundle size, you can install `@indonesian-location-autocomplete/core` directly on your server/backend (Node.js, Bun, Deno). Your backend API can import `searchLocations` and query the raw JSON database, allowing you to feed results to the frontend via `searchResults` without sending the 15MB database to the browser.
+> To minimize your client bundle size, you can install `@hudiohizari/indonesian-location-autocomplete-core` directly on your server/backend (Node.js, Bun, Deno). Your backend API can import `searchLocations` and query the raw JSON database, allowing you to feed results to the frontend via `searchResults` without sending the 15MB database to the browser.
 
 ```tsx
 import { useState, useEffect } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
 
 function RemoteAPISearch() {
   const [value, setValue] = useState('')
@@ -224,7 +224,7 @@ function RemoteAPISearch() {
 #### Installation
 
 ```bash
-npm install @indonesian-location-autocomplete/core @indonesian-location-autocomplete/react
+npm install @hudiohizari/indonesian-location-autocomplete-core @hudiohizari/indonesian-location-autocomplete
 ```
 
 > [!TIP]
@@ -275,7 +275,7 @@ npm install @indonesian-location-autocomplete/core @indonesian-location-autocomp
 If you want a robust, out-of-the-box local autocomplete component without importing or managing the postcode dataset manually:
 ```tsx
 import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
 
 function EasySearch() {
   const [value, setValue] = useState('')
@@ -292,9 +292,9 @@ function EasySearch() {
 ##### B. Custom Search (Local JSON Data - Flexible Loading)
 ```tsx
 import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
-import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
@@ -314,9 +314,9 @@ function CustomSearch() {
 ##### C. Dynamic Parent Filtering (Chained Dropdowns)
 ```tsx
 import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
-import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
@@ -342,9 +342,9 @@ function ChainedDropdowns() {
 ```tsx
 import { useState } from 'react'
 import { StyleSheet } from 'react-native'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
-import type { LocationRecord } from '@indonesian-location-autocomplete/react'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
@@ -489,7 +489,7 @@ To ensure simple installation across different tech stacks, native packages are 
 
 ## Library Deployment Status
 
-- [x] `@indonesian-location-autocomplete/react` (npm - Unified Web & React Native)
+- [x] `@hudiohizari/indonesian-location-autocomplete` (npm - Unified Web & React Native)
 - [ ] `com.github.indonesian-location-autocomplete` (Maven Central / JitPack)
 
 ---
@@ -529,7 +529,7 @@ We have configured fully automated continuous integration and deployment pipelin
 #### Automated NPM Release (`release.yml`)
 * Automatically publishes workspace packages to the npm Registry when you push a version tag (e.g. `v1.0.0`).
 * Runs all test validations first before deploying.
-* Publishes the core library (`@indonesian-location-autocomplete/core`) followed by the React library (`@indonesian-location-autocomplete/react`) sequentially.
+* Publishes the core library (`@hudiohizari/indonesian-location-autocomplete-core`) followed by the React library (`@hudiohizari/indonesian-location-autocomplete`) sequentially.
 
 **Setup Instructions**:
 1. Generate an Access Token (Publish type) on [npm](https://www.npmjs.com/).

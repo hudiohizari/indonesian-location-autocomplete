@@ -18,9 +18,9 @@ import {
 } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import type { LocationRecord } from '@indonesian-location-autocomplete/core'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete-core'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
@@ -305,7 +305,7 @@ export default function App() {
               />
             </View>
             <Text style={styles.styleHint}>
-              Perfect for low-end mobile hardware. Offloads data loading and searching from the JS thread. You can install `@indonesian-location-autocomplete/core` directly on your server to handle heavy search logic.
+              Perfect for low-end mobile hardware. Offloads data loading and searching from the JS thread. You can install `@hudiohizari/indonesian-location-autocomplete-core` directly on your server to handle heavy search logic.
             </Text>
           </View>
 

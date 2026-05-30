@@ -6,9 +6,9 @@
  */
 
 import { useState, useEffect } from 'react'
-import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
-import type { LocationRecord } from '@indonesian-location-autocomplete/react'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
 
 const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
 

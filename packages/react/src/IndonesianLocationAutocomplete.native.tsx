@@ -19,9 +19,9 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native'
-import { searchLocations } from '@indonesian-location-autocomplete/core'
-import type { LocationRecord, SearchOptions } from '@indonesian-location-autocomplete/core'
-import postcodeDataRaw from '@indonesian-location-autocomplete/core/data'
+import { searchLocations } from '@hudiohizari/indonesian-location-autocomplete-core'
+import type { LocationRecord, SearchOptions } from '@hudiohizari/indonesian-location-autocomplete-core'
+import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
 
 const defaultPostcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
