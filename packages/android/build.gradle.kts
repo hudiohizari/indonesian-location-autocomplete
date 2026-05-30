@@ -50,6 +50,10 @@ android {
     }
 }
 
+tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -76,8 +80,8 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = project.findProperty("group")?.toString() ?: "id.my.hizari.indonesianlocation"
-            artifactId = project.findProperty("artifactId")?.toString() ?: "autocomplete"
+            groupId = "com.github.hudiohizari"
+            artifactId = "indonesian-location-autocomplete"
             version = project.findProperty("version")?.toString() ?: "1.0.0"
 
             afterEvaluate {
