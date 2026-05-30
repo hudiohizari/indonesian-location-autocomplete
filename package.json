@@ -1,0 +1,25 @@
+{
+  "name": "indonesian-location-autocomplete-monorepo",
+  "version": "1.0.0",
+  "description": "Multi-platform autocomplete library for Indonesian locations (React, React Native, Android Compose, Swift)",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "bootstrap": "npm install"
+  },
+  "keywords": [
+    "indonesia",
+    "location",
+    "autocomplete",
+    "react",
+    "react-native",
+    "android",
+    "swift",
+    "composable"
+  ],
+  "author": "",
+  "license": "MIT"
+}
