@@ -1,0 +1,253 @@
+/*
+ * Created by Hudio Hizari
+ * https://hizari.my.id/
+ * https://github.com/hudiohizari/
+ * hhizari@gmail.com
+ */
+
+package id.my.hizari.indonesianlocation.autocomplete.ui
+
+import android.util.Log
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import id.my.hizari.indonesianlocation.autocomplete.engine.LocationSearchEngine
+import id.my.hizari.indonesianlocation.autocomplete.model.LocationRecord
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+
+data class AutocompleteTexts(
+    val placeholder: String = "Cari lokasi...",
+    val noResults: String = "Tidak ada lokasi ditemukan"
+)
+
+@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
+@Composable
+fun IndonesianLocationAutocomplete(
+    modifier: Modifier = Modifier,
+    value: String,
+    onQueryChange: (String) -> Unit,
+    onLocationSelect: (LocationRecord) -> Unit,
+    searchEngine: LocationSearchEngine? = null,
+    maxResults: Int = 10,
+    minQueryLength: Int = 3,
+    debounceMs: Long = 300L,
+    texts: AutocompleteTexts = AutocompleteTexts(),
+    enabled: Boolean = true,
+    shape: androidx.compose.ui.graphics.Shape = OutlinedTextFieldDefaults.shape,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    textStyle: TextStyle = TextStyle.Default,
+    dropdownModifier: Modifier = Modifier,
+    itemPrimaryTextStyle: TextStyle = TextStyle.Default,
+    itemPrimaryTextColor: Color = Color.Unspecified,
+    itemSecondaryTextStyle: TextStyle = TextStyle.Default,
+    itemSecondaryTextColor: Color = Color.Unspecified,
+    itemIconTint: Color = Color.Unspecified,
+    leadingIcon: @Composable (() -> Unit)? = {
+        Icon(
+            imageVector = Icons.Default.Place,
+            contentDescription = "Location Pin"
+        )
+    },
+    loaderContent: @Composable (() -> Unit)? = {
+        CircularProgressIndicator(
+            modifier = Modifier.size(20.dp),
+            strokeWidth = 2.dp
+        )
+    },
+    itemContent: @Composable (ColumnScope.(LocationRecord) -> Unit)? = null,
+    formatSelectedLocation: (LocationRecord) -> String = { "${it.village}, ${it.district}, ${it.regency}, ${it.province} - ${it.code}" },
+    emptyContent: @Composable (ColumnScope.(query: String) -> Unit)? = null,
+    filter: ((LocationRecord) -> Boolean)? = null,
+    searchProvider: (suspend (String) -> List<LocationRecord>)? = null
+) {
+    var query by remember(value) { mutableStateOf(value) }
+    var results by remember { mutableStateOf<List<LocationRecord>>(emptyList()) }
+    var isSearching by remember { mutableStateOf(false) }
+    var isOpen by remember { mutableStateOf(false) }
+
+    val focusManager = LocalFocusManager.current
+
+    // Flow representing manual keystroke search queries
+    val searchFlow = remember {
+        MutableSharedFlow<String>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST
+        )
+    }
+
+    // Wrap dynamic lambdas and parameters in rememberUpdatedState to prevent LaunchedEffect from restarting on recompositions
+    val currentSearchEngine by rememberUpdatedState(searchEngine)
+    val currentSearchProvider by rememberUpdatedState(searchProvider)
+    val currentFilter by rememberUpdatedState(filter)
+    val currentMaxResults by rememberUpdatedState(maxResults)
+    val currentMinQueryLength by rememberUpdatedState(minQueryLength)
+
+    // Debounced search trigger via Coroutine Flow
+    LaunchedEffect(debounceMs) {
+        searchFlow
+            .distinctUntilChanged()
+            .debounce(debounceMs)
+            .collectLatest { query ->
+                if (query.trim().length >= currentMinQueryLength) {
+                    isSearching = true
+                    try {
+                        results = currentSearchProvider?.invoke(query)
+                            ?: currentSearchEngine?.searchLocations(
+                                query,
+                                currentMaxResults,
+                                currentMinQueryLength,
+                                currentFilter
+                            ) ?: run {
+                                Log.w(
+                                    "IndonesianLocationAutocomplete",
+                                    "No searchEngine or searchProvider provided."
+                                )
+                                emptyList()
+                            }
+
+                        isOpen = true
+                    } catch (e: Exception) {
+                        Log.e("IndonesianLocationAutocomplete", "Autocomplete search error", e)
+                        results = emptyList()
+                        isOpen = true
+                    } finally {
+                        isSearching = false
+                    }
+                } else {
+                    results = emptyList()
+                    isOpen = false
+                    isSearching = false
+                }
+            }
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = isOpen && (!isSearching || results.isNotEmpty()),
+        onExpandedChange = {},
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = {
+                query = it
+                onQueryChange(it)
+                searchFlow.tryEmit(it)
+                if (it.trim().length >= minQueryLength) {
+                    isOpen = true
+                    isSearching = true
+                } else {
+                    isOpen = false
+                    isSearching = false
+                }
+            },
+            enabled = enabled,
+            textStyle = textStyle,
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
+            placeholder = { Text(texts.placeholder) },
+            leadingIcon = leadingIcon,
+            trailingIcon = if (isSearching && loaderContent != null) {
+                { loaderContent() }
+            } else null,
+            singleLine = true,
+            shape = shape,
+            colors = colors
+        )
+
+        DropdownMenu(
+            expanded = isOpen && (!isSearching || results.isNotEmpty()),
+            onDismissRequest = { isOpen = false },
+            properties = PopupProperties(focusable = false),
+            modifier = Modifier
+                .exposedDropdownSize()
+                .then(dropdownModifier)
+        ) {
+            if (results.isEmpty()) {
+                if (emptyContent != null) {
+                    emptyContent(query)
+                } else {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = texts.noResults,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        onClick = {},
+                        enabled = false
+                    )
+                }
+            } else {
+                results.forEach { loc ->
+                    if (itemContent != null) {
+                        DropdownMenuItem(
+                            text = { itemContent(loc) },
+                            onClick = {
+                                val formatted = formatSelectedLocation(loc)
+                                query = formatted
+                                onQueryChange(formatted)
+                                isOpen = false
+                                isSearching = false
+                                focusManager.clearFocus()
+                                onLocationSelect(loc)
+                            },
+                            leadingIcon = null,
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    } else {
+                        DropdownMenuItem(
+                            text = {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    Text(
+                                        text = "${loc.village}, ${loc.district}",
+                                        style = if (itemPrimaryTextStyle != TextStyle.Default) itemPrimaryTextStyle else MaterialTheme.typography.bodyLarge,
+                                        color = if (itemPrimaryTextColor != Color.Unspecified) itemPrimaryTextColor else MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "${loc.regency}, ${loc.province} - ${loc.code}",
+                                        style = if (itemSecondaryTextStyle != TextStyle.Default) itemSecondaryTextStyle else MaterialTheme.typography.bodyMedium,
+                                        color = if (itemSecondaryTextColor != Color.Unspecified) itemSecondaryTextColor else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            },
+                            onClick = {
+                                val formatted = formatSelectedLocation(loc)
+                                query = formatted
+                                onQueryChange(formatted)
+                                isOpen = false
+                                isSearching = false
+                                focusManager.clearFocus()
+                                onLocationSelect(loc)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Place,
+                                    contentDescription = null,
+                                    tint = if (itemIconTint != Color.Unspecified) itemIconTint else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            },
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

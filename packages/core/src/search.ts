@@ -11,6 +11,13 @@ const DEFAULT_MAX_RESULTS = 10
 const DEFAULT_MIN_QUERY_LENGTH = 3
 
 /**
+ * Module-scoped cache for normalized search strings.
+ * Uses WeakMap to avoid mutating input data objects and to allow GC
+ * when the data array is released by the consumer.
+ */
+const searchStrCache = new WeakMap<LocationRecord, string>()
+
+/**
  * Searches the Indonesian postcode database locally.
  *
  * Splits the query into individual terms and returns records where
@@ -48,19 +55,21 @@ export function searchLocations(
     if (results.length >= maxResults) break
 
     const item = data[i]
-    
-    // Lazily cache the normalized search string directly on the item.
-    // Separator '\n' ensures search terms (which don't contain whitespace) cannot cross field boundaries.
-    let searchStr = (item as any)._searchStr
+
+    // Lazily cache the normalized search string per record.
+    // Separator '\n' ensures search terms cannot cross field boundaries.
+    let searchStr = searchStrCache.get(item)
     if (searchStr === undefined) {
       searchStr = `${item.village || ''}\n${item.district || ''}\n${item.regency || ''}\n${item.province || ''}\n${item.code || ''}`.toLowerCase()
-      ;(item as any)._searchStr = searchStr
+      searchStrCache.set(item, searchStr)
     }
 
-    const matches = searchTerms.every(term => searchStr.includes(term))
+    const matches = searchTerms.every(term => searchStr!.includes(term))
 
     if (matches) {
-      results.push(item)
+      if (!options?.filter || options.filter(item)) {
+        results.push(item)
+      }
     }
   }
 

@@ -5,7 +5,7 @@
  * hhizari@gmail.com
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { IndonesianLocationAutocomplete } from '@indonesian-location-autocomplete/react'
 import type { LocationRecord } from '@indonesian-location-autocomplete/react'
 import postcodeData from '@indonesian-location-autocomplete/core/data'
@@ -21,21 +21,59 @@ function App() {
     dark: { value: '', selected: null },
     emerald: { value: '', selected: null },
     minimal: { value: '', selected: null },
+    customEmpty: { value: '', selected: null },
+    filtered: { value: '', selected: null },
+    remote: { value: '', selected: null },
   })
+
+  // Cascading/Chained dynamic filter state
+  const [selectedProvince, setSelectedProvince] = useState('Jawa Barat')
+
+  // Controlled Remote/API Search State
+  const [remoteQuery, setRemoteQuery] = useState('')
+  const [remoteResults, setRemoteResults] = useState<LocationRecord[]>([])
+  const [remoteLoading, setRemoteLoading] = useState(false)
+
+  // Simulation of Remote API call on remoteQuery change
+  useEffect(() => {
+    if (remoteQuery.trim().length < 3) {
+      setRemoteResults([])
+      setRemoteLoading(false)
+      return
+    }
+
+    setRemoteLoading(true)
+    const handler = setTimeout(() => {
+      // Simulate remote lookup over the dataset
+      const queryLower = remoteQuery.toLowerCase()
+      const matches = postcodeData
+        .filter(item => {
+          const content = `${item.village} ${item.district} ${item.regency} ${item.province} ${item.code}`.toLowerCase()
+          return content.includes(queryLower)
+        })
+        .slice(0, 5)
+
+      setRemoteResults(matches)
+      setRemoteLoading(false)
+    }, 600) // Simulated network latency
+
+    return () => clearTimeout(handler)
+  }, [remoteQuery])
+
+  const formatLocation = (loc: LocationRecord) => {
+    return `${loc.village}, ${loc.district}, ${loc.regency}, ${loc.province} - ${loc.code}`
+  }
+
+  // Track the most recently selected location across all preview cards
+  const [lastSelected, setLastSelected] = useState<LocationRecord | null>(null)
 
   const updateThemeState = (key: string, value: string, selected: LocationRecord | null) => {
     setThemes(prev => ({
       ...prev,
       [key]: { value, selected }
     }))
+    if (selected) setLastSelected(selected)
   }
-
-  // Get the most recently selected location across all previews to show details
-  const activeSelected =
-    themes.minimal.selected ||
-    themes.emerald.selected ||
-    themes.dark.selected ||
-    themes.default.selected
 
   return (
     <div className="playground-wrapper">
@@ -93,7 +131,7 @@ function App() {
         /* Preview Grid */
         .preview-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
           gap: 24px;
           margin-bottom: 40px;
         }
@@ -212,6 +250,19 @@ function App() {
           left: 4px !important;
         }
 
+        .filter-select {
+          width: 100%;
+          padding: 12px;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: #1e293b;
+          color: #f1f5f9;
+          font-family: inherit;
+          margin-bottom: 16px;
+          outline: none;
+          cursor: pointer;
+        }
+
         /* Details section */
         .details-section {
           background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%);
@@ -302,11 +353,11 @@ function App() {
               <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
               <circle cx="12" cy="10" r="3"/>
             </svg>
-            Local JSON Search
+            Multi-Platform UI Autocomplete
           </div>
           <h1>Indonesian Location Autocomplete</h1>
           <p className="subtitle">
-            A premium, high performance location search component. Override colors, margins, fonts and padding using simple CSS variable tokens.
+            A premium, high performance location search component. Test multiple style presets, empty states, parent filtering constraints, and API remote search controls.
           </p>
         </header>
 
@@ -322,7 +373,7 @@ function App() {
                 value={themes.default.value}
                 data={postcodeData}
                 onQueryChange={(q) => updateThemeState('default', q, null)}
-                onLocationSelect={(loc) => updateThemeState('default', q => q, loc)}
+                onLocationSelect={(loc) => updateThemeState('default', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
               />
             </div>
@@ -343,7 +394,7 @@ function App() {
                 value={themes.dark.value}
                 data={postcodeData}
                 onQueryChange={(q) => updateThemeState('dark', q, null)}
-                onLocationSelect={(loc) => updateThemeState('dark', q => q, loc)}
+                onLocationSelect={(loc) => updateThemeState('dark', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
               />
             </div>
@@ -352,7 +403,7 @@ function App() {
             </p>
           </div>
 
-          {/* 3. Emerald Forest (Light Scheme) */}
+          {/* 3. Emerald Forest */}
           <div className="preview-card theme-emerald-wrapper">
             <div className="card-header">
               <span className="card-title">Emerald Mint</span>
@@ -364,7 +415,7 @@ function App() {
                 value={themes.emerald.value}
                 data={postcodeData}
                 onQueryChange={(q) => updateThemeState('emerald', q, null)}
-                onLocationSelect={(loc) => updateThemeState('emerald', q => q, loc)}
+                onLocationSelect={(loc) => updateThemeState('emerald', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
               />
             </div>
@@ -385,7 +436,7 @@ function App() {
                 value={themes.minimal.value}
                 data={postcodeData}
                 onQueryChange={(q) => updateThemeState('minimal', q, null)}
-                onLocationSelect={(loc) => updateThemeState('minimal', q => q, loc)}
+                onLocationSelect={(loc) => updateThemeState('minimal', formatLocation(loc), loc)}
                 texts={{ placeholder: 'Cari lokasi...' }}
               />
             </div>
@@ -393,11 +444,116 @@ function App() {
               Border-free input with only a bottom underline, matching compact dashboard search modules.
             </p>
           </div>
+
+          {/* 5. Custom Empty State */}
+          <div className="preview-card">
+            <div className="card-header">
+              <span className="card-title">Custom Empty State</span>
+              <span className="card-tag" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#fca5a5' }}>Custom JSX</span>
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <IndonesianLocationAutocomplete
+                value={themes.customEmpty.value}
+                data={postcodeData}
+                onQueryChange={(q) => updateThemeState('customEmpty', q, null)}
+                onLocationSelect={(loc) => updateThemeState('customEmpty', formatLocation(loc), loc)}
+                texts={{ placeholder: 'Type invalid name (e.g. xyz)...' }}
+                renderEmptyState={(q) => (
+                  <div style={{ padding: '16px', textAlign: 'center' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '8px', display: 'inline-block' }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.875rem' }}>No Matches Found</div>
+                    <div style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '2px' }}>
+                      We couldn't find any location matching "{q}"
+                    </div>
+                  </div>
+                )}
+              />
+            </div>
+            <p className="style-hint">
+              Customize the empty state markup (render custom icons, warnings, or buttons) using the query parameter.
+            </p>
+          </div>
+
+          {/* 6. Dynamic Parent Filter */}
+          <div className="preview-card">
+            <div className="card-header">
+              <span className="card-title">Chained Province Filter</span>
+              <span className="card-tag" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' }}>Cascading</span>
+            </div>
+            <select
+              className="filter-select"
+              value={selectedProvince}
+              onChange={(e) => setSelectedProvince(e.target.value)}
+            >
+              <option value="Jawa Barat">Only Jawa Barat</option>
+              <option value="DKI Jakarta">Only DKI Jakarta</option>
+              <option value="Jawa Tengah">Only Jawa Tengah</option>
+              <option value="Banten">Only Banten</option>
+            </select>
+            <div style={{ marginBottom: 24 }}>
+              <IndonesianLocationAutocomplete
+                value={themes.filtered.value}
+                data={postcodeData}
+                onQueryChange={(q) => updateThemeState('filtered', q, null)}
+                onLocationSelect={(loc) => updateThemeState('filtered', formatLocation(loc), loc)}
+                texts={{ placeholder: `Search within ${selectedProvince}...` }}
+                searchOptions={{
+                  filter: (loc) => loc.province === selectedProvince
+                }}
+              />
+            </div>
+            <p className="style-hint">
+              Filters locations dynamically based on parent selects (e.g. searching only cities within a selected province).
+            </p>
+          </div>
+
+          {/* 7. Mock Controlled API Search */}
+          <div className="preview-card">
+            <div className="card-header">
+              <span className="card-title">Controlled Remote API</span>
+              <span className="card-tag" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#c084fc' }}>Controlled API</span>
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <IndonesianLocationAutocomplete
+                value={themes.remote.value}
+                onQueryChange={(q) => {
+                  updateThemeState('remote', q, null)
+                  setRemoteQuery(q)
+                }}
+                onLocationSelect={(loc) => {
+                  updateThemeState('remote', formatLocation(loc), loc)
+                }}
+                searchResults={remoteResults}
+                isLoading={remoteLoading}
+                texts={{ placeholder: 'Search via Mock API...' }}
+                loaderContent={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#a5b4fc', fontSize: '0.75rem' }}>
+                    <div style={{
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      border: '2px solid #a5b4fc',
+                      borderTopColor: 'transparent',
+                      animation: 'ila-spin 0.6s linear infinite'
+                    }} />
+                    <span>API Fetching...</span>
+                  </div>
+                }
+              />
+            </div>
+            <p className="style-hint">
+              Bypasses the 15MB local JSON database entirely. Fires query callback and renders controlled results/loader state directly.
+            </p>
+          </div>
         </div>
 
         {/* Selected Location Details */}
         <div className="details-section">
-          {activeSelected ? (
+          {lastSelected ? (
             <div>
               <div className="details-header">
                 <div className="details-icon-wrapper">
@@ -411,35 +567,35 @@ function App() {
               <div className="details-grid">
                 <div className="detail-item">
                   <div className="detail-label">Postcode</div>
-                  <div className="detail-value">{activeSelected.code}</div>
+                  <div className="detail-value">{lastSelected.code}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">Village / Kelurahan</div>
-                  <div className="detail-value">{activeSelected.village}</div>
+                  <div className="detail-value">{lastSelected.village}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">District / Kecamatan</div>
-                  <div className="detail-value">{activeSelected.district}</div>
+                  <div className="detail-value">{lastSelected.district}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">Regency / Kota / Kabupaten</div>
-                  <div className="detail-value">{activeSelected.regency}</div>
+                  <div className="detail-value">{lastSelected.regency}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">Province / Provinsi</div>
-                  <div className="detail-value">{activeSelected.province}</div>
+                  <div className="detail-value">{lastSelected.province}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">Coordinates</div>
-                  <div className="detail-value">{activeSelected.latitude}, {activeSelected.longitude}</div>
+                  <div className="detail-value">{lastSelected.latitude}, {lastSelected.longitude}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">Timezone</div>
-                  <div className="detail-value">{activeSelected.timezone}</div>
+                  <div className="detail-value">{lastSelected.timezone}</div>
                 </div>
                 <div className="detail-item">
                   <div className="detail-label">Elevation</div>
-                  <div className="detail-value">{activeSelected.elevation}m</div>
+                  <div className="detail-value">{lastSelected.elevation}m</div>
                 </div>
               </div>
             </div>

@@ -39,4 +39,7 @@ export interface SearchOptions {
   maxResults?: number
   /** Minimum query length before searching. Default: 3 */
   minQueryLength?: number
+  /** Optional filter callback to restrict search results */
+  filter?: (location: LocationRecord) => boolean
 }
+

@@ -140,3 +140,47 @@
   color: var(--ila-no-results-color, #6b7280);
   font-size: var(--ila-no-results-font-size, 0.875rem);
 }
+
+/* --- Loader / Spinner --- */
+
+.loader {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ila-loader-border-color, #e5e7eb);
+  border-top-color: var(--ila-loader-color, #6366f1);
+  border-radius: 50%;
+  animation: ila-spin 0.6s linear infinite;
+  pointer-events: none;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+@keyframes ila-spin {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.inputNoIcon {
+  padding-left: var(--ila-input-padding-no-icon, 16px) !important;
+}
+
+.loaderWrapper {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  flex-shrink: 0;
+  z-index: 5;
+}

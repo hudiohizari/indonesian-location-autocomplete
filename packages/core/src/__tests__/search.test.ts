@@ -100,4 +100,17 @@ describe('searchLocations', () => {
     expect(results).toHaveLength(1)
     expect(results[0].village).toBe('Dago')
   })
+
+  it('should filter search results using custom filter option', () => {
+    // Search 'jakarta' normally yields Gambir and Menteng
+    const unfiltered = searchLocations('jakarta', mockData)
+    expect(unfiltered).toHaveLength(2)
+
+    // Filter to only allow locations in Gambir
+    const filtered = searchLocations('jakarta', mockData, {
+      filter: (loc) => loc.village === 'Gambir'
+    })
+    expect(filtered).toHaveLength(1)
+    expect(filtered[0].village).toBe('Gambir')
+  })
 })

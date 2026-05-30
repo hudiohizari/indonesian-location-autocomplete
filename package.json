@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "bootstrap": "npm install",
-    "test": "vitest run"
+    "test": "vitest run",
+    "dev:react-demo": "npm run dev --workspace=examples/react-demo",
+    "build:react-demo": "npm run build --workspace=examples/react-demo"
   },
   "devDependencies": {
     "vitest": "^1.6.0"

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Created by Hudio Hizari
+  https://hizari.my.id/
+  https://github.com/hudiohizari/
+  hhizari@gmail.com
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="id.my.hizari.indonesianlocation.autocomplete">
+</manifest>
