@@ -1,0 +1,142 @@
+/*
+ * Created by Hudio Hizari
+ * https://hizari.my.id/
+ * https://github.com/hudiohizari/
+ * hhizari@gmail.com
+ */
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* --- Input --- */
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  padding: var(--ila-input-padding, 12px 16px 12px 40px);
+  border: var(--ila-input-border, 1px solid #d1d5db);
+  border-radius: var(--ila-input-border-radius, 8px);
+  font-size: var(--ila-input-font-size, 0.9375rem);
+  font-family: inherit;
+  color: var(--ila-input-text-color, #1f2937);
+  background: var(--ila-input-bg, #ffffff);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+  color: var(--ila-placeholder-color, #9ca3af);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ila-focus-border-color, #6366f1);
+  box-shadow: var(--ila-focus-shadow, 0 0 0 3px rgba(99, 102, 241, 0.12));
+}
+
+.input:disabled {
+  background: var(--ila-disabled-bg, #f3f4f6);
+  color: var(--ila-disabled-color, #9ca3af);
+  cursor: not-allowed;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--ila-icon-color, #9ca3af);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* --- Dropdown --- */
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: var(--ila-dropdown-max-height, 280px);
+  overflow-y: auto;
+  background: var(--ila-dropdown-bg, #ffffff);
+  border: var(--ila-dropdown-border, 1px solid #e5e7eb);
+  border-radius: var(--ila-dropdown-border-radius, 8px);
+  box-shadow: var(--ila-dropdown-shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+  z-index: var(--ila-dropdown-z-index, 50);
+  list-style: none;
+  padding: var(--ila-dropdown-padding, 4px);
+  margin: 0;
+  animation: dropdownIn 0.15s ease-out;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Items --- */
+
+.item {
+  padding: var(--ila-item-padding, 10px 12px);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: var(--ila-item-border-radius, 6px);
+  transition: background-color 0.1s ease;
+}
+
+.item:hover,
+.itemActive {
+  background-color: var(--ila-item-hover-bg, #f3f4f6);
+}
+
+.itemIcon {
+  margin-top: 2px;
+  color: var(--ila-item-icon-color, #9ca3af);
+  flex-shrink: 0;
+}
+
+.itemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.itemPrimary {
+  font-weight: 500;
+  color: var(--ila-item-primary-color, #1f2937);
+  font-size: var(--ila-item-primary-font-size, 0.9375rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemSecondary {
+  font-size: var(--ila-item-secondary-font-size, 0.8125rem);
+  color: var(--ila-item-secondary-color, #6b7280);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Empty state --- */
+
+.noResults {
+  padding: 16px;
+  text-align: center;
+  color: var(--ila-no-results-color, #6b7280);
+  font-size: var(--ila-no-results-font-size, 0.875rem);
+}

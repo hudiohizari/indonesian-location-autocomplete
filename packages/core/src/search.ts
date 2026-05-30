@@ -1,3 +1,10 @@
+/*
+ * Created by Hudio Hizari
+ * https://hizari.my.id/
+ * https://github.com/hudiohizari/
+ * hhizari@gmail.com
+ */
+
 import type { LocationRecord, SearchOptions } from './types'
 
 const DEFAULT_MAX_RESULTS = 10
@@ -41,20 +48,16 @@ export function searchLocations(
     if (results.length >= maxResults) break
 
     const item = data[i]
-    const village = (item.village || '').toLowerCase()
-    const district = (item.district || '').toLowerCase()
-    const regency = (item.regency || '').toLowerCase()
-    const province = (item.province || '').toLowerCase()
-    const code = String(item.code || '')
+    
+    // Lazily cache the normalized search string directly on the item.
+    // Separator '\n' ensures search terms (which don't contain whitespace) cannot cross field boundaries.
+    let searchStr = (item as any)._searchStr
+    if (searchStr === undefined) {
+      searchStr = `${item.village || ''}\n${item.district || ''}\n${item.regency || ''}\n${item.province || ''}\n${item.code || ''}`.toLowerCase()
+      ;(item as any)._searchStr = searchStr
+    }
 
-    const matches = searchTerms.every(
-      term =>
-        village.includes(term) ||
-        district.includes(term) ||
-        regency.includes(term) ||
-        province.includes(term) ||
-        code.includes(term)
-    )
+    const matches = searchTerms.every(term => searchStr.includes(term))
 
     if (matches) {
       results.push(item)

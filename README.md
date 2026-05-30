@@ -5,10 +5,11 @@ A robust, lightweight, and blazing fast multi-platform location autocomplete lib
 Designed from the ground up to be **fully customizable**, it gives you total control over text translations, input styles, loader components, dropdown layouts, and theme tokens on every single supported platform, allowing it to seamlessly match your app's unique design system.
 
 This monorepo contains native implementations for all major frontend frameworks and mobile platforms:
-* **React JS (Web):** Modern, fully styled custom input with micro-animations and keyboard navigation support.
-* **React Native (Mobile):** Sleek, touch-friendly dropdown/autocomplete list optimized for iOS and Android.
-* **Android Jetpack Compose (Kotlin):** Premium native Compose UI component with material elements and smooth entry transitions.
-* **Swift (iOS/SwiftUI):** Native Declarative SwiftUI component with standard iOS layouts.
+
+- **React JS (Web):** Modern, fully styled custom input with micro-animations and keyboard navigation support.
+- **React Native (Mobile):** Sleek, touch-friendly dropdown/autocomplete list optimized for iOS and Android.
+- **Android Jetpack Compose (Kotlin):** Premium native Compose UI component with material elements and smooth entry transitions.
+- **Swift (iOS/SwiftUI):** Native Declarative SwiftUI component with standard iOS layouts.
 
 ## Monorepo Layout
 
@@ -36,25 +37,29 @@ indonesian-location-autocomplete/
 ## Example Projects
 
 To see the components in action, explore the playground apps in the `examples/` directory:
-* **[React Web Demo](./examples/react-demo)** — A modern Next.js/Vite React app showing custom styles, text localization, and theme overrides.
-* **[React Native Demo](./examples/react-native-demo)** — An Expo-based mobile app showing custom dropdown sheets and responsive input sizing.
-* **[Android Jetpack Compose Demo](./examples/android-demo)** — A native Kotlin app showcasing material themes and soft-keyboard focus interactions.
-* **[iOS SwiftUI Demo](./examples/ios-demo)** — A native Xcode SwiftUI app showing simple form binding and light/dark mode adaptation.
+
+- **[React Web Demo](./examples/react-demo)** - A modern Next.js/Vite React app showing custom styles, text localization, and theme overrides.
+- **[React Native Demo](./examples/react-native-demo)** - An Expo-based mobile app showing custom dropdown sheets and responsive input sizing.
+- **[Android Jetpack Compose Demo](./examples/android-demo)** - A native Kotlin app showcasing material themes and soft-keyboard focus interactions.
+- **[iOS SwiftUI Demo](./examples/ios-demo)** - A native Xcode SwiftUI app showing simple form binding and light/dark mode adaptation.
 
 ## How It Works
 
 The autocomplete engine searches over the official Indonesian Postcode Database.
 Each record contains:
-* `code` (Postcode number)
-* `village` (Kelurahan)
-* `district` (Kecamatan)
-* `regency` (Kota/Kabupaten)
-* `province` (Provinsi)
+
+- `code` (Postcode number)
+- `village` (Kelurahan)
+- `district` (Kecamatan)
+- `regency` (Kota/Kabupaten)
+- `province` (Provinsi)
 
 The search query is debounced and queried locally or via an API client to instantly fetch matches matching the hierarchy query.
 
 ### 🌎 Cross-Platform Architecture & Asset Compatibility
+
 To guarantee that this library works flawlessly on **every single platform** without dependency conflicts, we decoupled the **search logic** from the **asset loading**:
+
 1. **Shared Pure Search Interface:** The core package exports a pure, stateless filtering engine `searchLocationLocal(query, data)` which depends on zero platform-specific APIs.
 2. **Platform-Native Data Loading:** Each native UI component handles JSON loading using its ecosystem's native asset pipeline:
    - **React (Web):** Dynamic/static ESM imports (`import data from ...`).
@@ -66,10 +71,10 @@ To guarantee that this library works flawlessly on **every single platform** wit
 
 ## Tested & Supported Platforms
 
-- [ ] React 18+ / React 19 (Web)
+- [x] React 18+ / React 19 (Web)
 - [ ] React Native (Android)
 - [ ] React Native (iOS)
-- [ ] Android Jetpack Compose (Kotlin 1.9+, Android SDK 24+)
+- [x] Android Jetpack Compose (Kotlin 1.9+, Android SDK 24+)
 - [ ] iOS SwiftUI (iOS 15+, Swift 5.9+)
 
 ---
@@ -77,9 +82,10 @@ To guarantee that this library works flawlessly on **every single platform** wit
 ## Distribution & Publishing Targets
 
 To ensure simple installation across different tech stacks, native packages are published directly to the standard registry of each platform:
-* **React JS & React Native:** [npm Registry](https://www.npmjs.com/)
-* **Android Jetpack Compose:** [Maven Central](https://search.maven.org/) / [JitPack](https://jitpack.io/)
-* **Swift / iOS:** [Swift Package Manager (SPM)](https://swift.org/package-manager/)
+
+- **React JS & React Native:** [npm Registry](https://www.npmjs.com/)
+- **Android Jetpack Compose:** [Maven Central](https://search.maven.org/) / [JitPack](https://jitpack.io/)
+- **Swift / iOS:** [Swift Package Manager (SPM)](https://swift.org/package-manager/)
 
 ## Library Deployment Status
 
@@ -93,7 +99,9 @@ To ensure simple installation across different tech stacks, native packages are 
 ## Deployment & Publishing Guide
 
 ### 1. React & React Native (npm)
+
 We build to ES modules and CommonJS and publish to npm:
+
 1. Build the package:
    ```bash
    npm run build --workspace=packages/react
@@ -105,13 +113,17 @@ We build to ES modules and CommonJS and publish to npm:
    ```
 
 ### 2. Android Jetpack Compose (JitPack / Maven Central)
+
 Android packages are distributed via JitPack for streamlined GitHub release tag builds:
+
 1. Apply the `maven-publish` plugin in `packages/android/build.gradle`.
 2. Configure a `jitpack.yml` at the root of the project if specific JDK versions are required.
 3. Publish by creating a new GitHub Release.
 
 ### 3. Swift / iOS (Swift Package Manager)
+
 SPM parses the Swift Package directly from git tags:
+
 1. Ensure `Package.swift` is valid and points to the native Swift target directory.
 2. Push a new semantic git tag:
    ```bash

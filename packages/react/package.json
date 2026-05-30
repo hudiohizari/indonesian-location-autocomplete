@@ -1,0 +1,28 @@
+{
+  "name": "@indonesian-location-autocomplete/react",
+  "version": "1.0.0",
+  "description": "React autocomplete component for Indonesian locations (Province, Regency, District, Village, Postcode)",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "@indonesian-location-autocomplete/core": "1.0.0"
+  },
+  "keywords": [
+    "indonesia",
+    "location",
+    "autocomplete",
+    "react",
+    "postcode"
+  ],
+  "license": "MIT"
+}

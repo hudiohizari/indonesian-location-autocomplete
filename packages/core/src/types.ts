@@ -1,3 +1,10 @@
+/*
+ * Created by Hudio Hizari
+ * https://hizari.my.id/
+ * https://github.com/hudiohizari/
+ * hhizari@gmail.com
+ */
+
 /**
  * A single record from the Indonesian postcode database.
  * Each record represents a village (kelurahan) within the
