@@ -378,8 +378,27 @@ const styles = StyleSheet.create({
 
 #### Installation
 
+For **Maven Central**:
 ```kotlin
 implementation("id.my.hizari.indonesianlocation:autocomplete:1.0.0")
+```
+
+For **JitPack**:
+
+1. Add the JitPack repository to your root `settings.gradle.kts`:
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+2. Add the dependency to your app's `build.gradle.kts`:
+```kotlin
+implementation("com.github.hudiohizari:indonesian-location-autocomplete-android:v1.0.0")
 ```
 
 #### API Parameters Reference
@@ -497,6 +516,30 @@ Android packages are distributed via JitPack for streamlined GitHub release tag 
 1. Apply the `maven-publish` plugin in `packages/android/build.gradle`.
 2. Configure a `jitpack.yml` at the root of the project if specific JDK versions are required.
 3. Publish by creating a new GitHub Release.
+
+### 3. Automated CI/CD (GitHub Actions)
+
+We have configured fully automated continuous integration and deployment pipelines under `.github/workflows`:
+
+#### Continuous Integration (`ci.yml`)
+* Automatically triggers on every push and pull request to the `main` branch.
+* Installs monorepo dependencies, runs core search engine unit tests, typechecks both JavaScript/TypeScript components (`packages/core` & `packages/react`), and builds the React web demo workspace.
+* Sets up JDK 17 to validate that the Android library (`packages/android`) compiles successfully.
+
+#### Automated NPM Release (`release.yml`)
+* Automatically publishes workspace packages to the npm Registry when you push a version tag (e.g. `v1.0.0`).
+* Runs all test validations first before deploying.
+* Publishes the core library (`@indonesian-location-autocomplete/core`) followed by the React library (`@indonesian-location-autocomplete/react`) sequentially.
+
+**Setup Instructions**:
+1. Generate an Access Token (Publish type) on [npm](https://www.npmjs.com/).
+2. In your GitHub repository settings, navigate to **Settings > Secrets and variables > Actions**.
+3. Create a new repository secret named `NPM_TOKEN` and paste your npm Access Token.
+4. When you're ready to publish, tag the commit and push it:
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
 
 ---
 

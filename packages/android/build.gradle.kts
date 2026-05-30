@@ -76,9 +76,9 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = "id.my.hizari.indonesianlocation"
-            artifactId = "autocomplete"
-            version = "1.0.0"
+            groupId = project.findProperty("group")?.toString() ?: "id.my.hizari.indonesianlocation"
+            artifactId = project.findProperty("artifactId")?.toString() ?: "autocomplete"
+            version = project.findProperty("version")?.toString() ?: "1.0.0"
 
             afterEvaluate {
                 from(components["release"])

@@ -1,0 +1,13 @@
+# JitPack Configuration File
+# https://jitpack.io/docs/
+
+jdk:
+  - openjdk17
+
+before_install:
+  # Ensure Gradle is installed and use the build environment's CLI
+  - gradle --version
+
+install:
+  # Move to the Android library subfolder and build & publish it to Maven Local
+  - cd packages/android && gradle publishToMavenLocal -Pgroup=com.github.${SOLO_OWNER:-hudiohizari} -PartifactId=indonesian-location-autocomplete-android
