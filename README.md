@@ -393,7 +393,7 @@ dependencyResolutionManagement {
 
 2. Add the dependency to your app's `build.gradle.kts`:
 ```kotlin
-implementation("com.github.hudiohizari:indonesian-location-autocomplete:v1.0.1")
+implementation("com.github.hudiohizari:indonesian-location-autocomplete:v1.0.2")
 ```
 
 #### API Parameters Reference
@@ -471,7 +471,7 @@ IndonesianLocationAutocomplete(
 To integrate the library package into your Xcode project:
 1. In Xcode, select **File > Add Package Dependencies...**
 2. Paste your repository URL: `https://github.com/hudiohizari/indonesian-location-autocomplete.git`
-3. Select the version tag (e.g. `v1.0.1`) or branch you wish to use.
+3. Select the version tag (e.g. `v1.0.2`) or branch you wish to use.
 
 #### API Parameters Reference
 
@@ -617,7 +617,7 @@ Continuous integration and deployment pipelines are configured under `.github/wo
 * Sets up JDK 17 to validate that the Android library (`packages/android`) compiles successfully.
 
 #### Automated NPM Release (`release.yml`)
-* Automatically publishes workspace packages to the npm Registry when a version tag is pushed (e.g. `v1.0.1`).
+* Automatically publishes workspace packages to the npm Registry when a version tag is pushed (e.g. `v1.0.2`).
 * Runs all test validations first before deploying.
 * Publishes the core library (`@hudiohizari/indonesian-location-autocomplete-core`) followed by the React library (`@hudiohizari/indonesian-location-autocomplete`) sequentially.
 
@@ -627,8 +627,8 @@ Continuous integration and deployment pipelines are configured under `.github/wo
 3. Create a new repository secret named `NPM_TOKEN` and paste your npm Access Token.
 4. When ready to publish, tag the commit and push:
    ```bash
-   git tag v1.0.1
-   git push origin v1.0.1
+   git tag v1.0.2
+   git push origin v1.0.2
    ```
 
 ---
