@@ -22,7 +22,6 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.graphics.Color
@@ -102,18 +101,34 @@ fun IndonesianLocationAutocomplete(
     val currentMaxResults by rememberUpdatedState(maxResults)
     val currentMinQueryLength by rememberUpdatedState(minQueryLength)
 
+    // Stable selection handler to avoid lambda re-allocation on every recomposition
+    val currentFormatSelectedLocation by rememberUpdatedState(formatSelectedLocation)
+    val currentOnQueryChange by rememberUpdatedState(onQueryChange)
+    val currentOnLocationSelect by rememberUpdatedState(onLocationSelect)
+
+    val handleSelect = remember<(LocationRecord) -> Unit> {
+        { loc ->
+            val formatted = currentFormatSelectedLocation(loc)
+            query = formatted
+            currentOnQueryChange(formatted)
+            isOpen = false
+            isSearching = false
+            focusManager.clearFocus()
+            currentOnLocationSelect(loc)
+        }
+    }
+
     // Debounced search trigger via Coroutine Flow
     LaunchedEffect(debounceMs) {
         searchFlow
-            .distinctUntilChanged()
             .debounce(debounceMs)
-            .collectLatest { query ->
-                if (query.trim().length >= currentMinQueryLength) {
+            .collectLatest { searchQuery ->
+                if (searchQuery.trim().length >= currentMinQueryLength) {
                     isSearching = true
                     try {
-                        results = currentSearchProvider?.invoke(query)
+                        val searchResults = currentSearchProvider?.invoke(searchQuery)
                             ?: currentSearchEngine?.searchLocations(
-                                query,
+                                searchQuery,
                                 currentMaxResults,
                                 currentMinQueryLength,
                                 currentFilter
@@ -125,11 +140,15 @@ fun IndonesianLocationAutocomplete(
                                 emptyList()
                             }
 
-                        isOpen = true
+                        // Only apply results if the query hasn't changed and dropdown is still open
+                        if (searchQuery == query && isOpen) {
+                            results = searchResults
+                        }
                     } catch (e: Exception) {
                         Log.e("IndonesianLocationAutocomplete", "Autocomplete search error", e)
-                        results = emptyList()
-                        isOpen = true
+                        if (searchQuery == query && isOpen) {
+                            results = emptyList()
+                        }
                     } finally {
                         isSearching = false
                     }
@@ -141,8 +160,10 @@ fun IndonesianLocationAutocomplete(
             }
     }
 
+    val isExpanded = isOpen && (!isSearching || results.isNotEmpty())
+
     ExposedDropdownMenuBox(
-        expanded = isOpen && (!isSearching || results.isNotEmpty()),
+        expanded = isExpanded,
         onExpandedChange = {},
         modifier = modifier
     ) {
@@ -176,7 +197,7 @@ fun IndonesianLocationAutocomplete(
         )
 
         DropdownMenu(
-            expanded = isOpen && (!isSearching || results.isNotEmpty()),
+            expanded = isExpanded,
             onDismissRequest = { isOpen = false },
             properties = PopupProperties(focusable = false),
             modifier = Modifier
@@ -185,7 +206,7 @@ fun IndonesianLocationAutocomplete(
         ) {
             if (results.isEmpty()) {
                 if (emptyContent != null) {
-                    emptyContent(query)
+                    Column { emptyContent(query) }
                 } else {
                     DropdownMenuItem(
                         text = {
@@ -204,15 +225,7 @@ fun IndonesianLocationAutocomplete(
                     if (itemContent != null) {
                         DropdownMenuItem(
                             text = { itemContent(loc) },
-                            onClick = {
-                                val formatted = formatSelectedLocation(loc)
-                                query = formatted
-                                onQueryChange(formatted)
-                                isOpen = false
-                                isSearching = false
-                                focusManager.clearFocus()
-                                onLocationSelect(loc)
-                            },
+                            onClick = { handleSelect(loc) },
                             leadingIcon = null,
                             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                         )
@@ -233,15 +246,7 @@ fun IndonesianLocationAutocomplete(
                                     )
                                 }
                             },
-                            onClick = {
-                                val formatted = formatSelectedLocation(loc)
-                                query = formatted
-                                onQueryChange(formatted)
-                                isOpen = false
-                                isSearching = false
-                                focusManager.clearFocus()
-                                onLocationSelect(loc)
-                            },
+                            onClick = { handleSelect(loc) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Place,

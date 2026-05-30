@@ -186,9 +186,10 @@ export function IndonesianLocationAutocomplete({
       setQuery(formatted)
       setIsOpen(false)
       Keyboard.dismiss()
+      onQueryChange?.(formatted)
       onLocationSelect(loc)
     },
-    [onLocationSelect, formatSelectedLocation]
+    [onLocationSelect, onQueryChange, formatSelectedLocation]
   )
 
   const handleChangeText = useCallback(

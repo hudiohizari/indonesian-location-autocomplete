@@ -39,6 +39,7 @@ public struct IndonesianLocationAutocomplete: View {
     @State private var results: [LocationRecord] = []
     @State private var isSearching: Bool = false
     @State private var isOpen: Bool = false
+    @State private var isSelecting: Bool = false
     @State private var searchTask: Task<Void, Never>? = nil
 
     public init(
@@ -83,6 +84,10 @@ public struct IndonesianLocationAutocomplete: View {
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .onChange(of: query) { _, newValue in
+                        if isSelecting {
+                            isSelecting = false
+                            return
+                        }
                         onQueryChange(newValue)
                         triggerSearch(query: newValue)
                     }
@@ -124,11 +129,15 @@ public struct IndonesianLocationAutocomplete: View {
                             LazyVStack(alignment: .leading, spacing: 0) {
                                 ForEach(results) { loc in
                                     Button(action: {
+                                        searchTask?.cancel()
+                                        isSelecting = true
                                         let formatted = formatSelectedLocation(loc)
                                         query = formatted
                                         value = formatted
                                         onQueryChange(formatted)
                                         isOpen = false
+                                        isSearching = false
+                                        results = []
                                         onLocationSelect(loc)
                                     }) {
                                         HStack(alignment: .top, spacing: 10) {
@@ -192,12 +201,13 @@ public struct IndonesianLocationAutocomplete: View {
             try? await Task.sleep(nanoseconds: UInt64(debounceMs) * 1_000_000)
             guard !Task.isCancelled else { return }
 
+            let searchQuery = query
             let matchedResults: [LocationRecord]
             if let searchProvider = searchProvider {
-                matchedResults = await searchProvider(query)
+                matchedResults = await searchProvider(searchQuery)
             } else if let searchEngine = searchEngine {
                 matchedResults = await searchEngine.searchLocations(
-                    query: query,
+                    query: searchQuery,
                     maxResults: maxResults,
                     minQueryLength: minQueryLength,
                     filter: filter
@@ -209,7 +219,10 @@ public struct IndonesianLocationAutocomplete: View {
             guard !Task.isCancelled else { return }
 
             await MainActor.run {
-                self.results = matchedResults
+                // Only apply results if the query hasn't changed and dropdown is still open
+                if self.query == searchQuery && self.isOpen {
+                    self.results = matchedResults
+                }
                 self.isSearching = false
             }
         }

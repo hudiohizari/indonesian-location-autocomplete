@@ -188,9 +188,10 @@ export function IndonesianLocationAutocomplete({
       setQuery(formatted)
       setIsOpen(false)
       setActiveIndex(-1)
+      onQueryChange?.(formatted)
       onLocationSelect(loc)
     },
-    [onLocationSelect, formatSelectedLocation]
+    [onLocationSelect, onQueryChange, formatSelectedLocation]
   )
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -23,11 +23,6 @@ public struct LocationRecord: Codable, Identifiable, Hashable {
         return "\(code)-\(village)-\(district)"
     }
 
-    // Cache search representation internally
-    internal var searchStr: String {
-        return "\(village)\n\(district)\n\(regency)\n\(province)\n\(code)".lowercased()
-    }
-
     public init(
         code: Int,
         village: String = "",
