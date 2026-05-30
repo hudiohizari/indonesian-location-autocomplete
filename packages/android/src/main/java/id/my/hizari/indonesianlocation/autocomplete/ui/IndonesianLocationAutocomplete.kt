@@ -29,8 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 
 data class AutocompleteTexts(
-    val placeholder: String = "Cari lokasi...",
-    val noResults: String = "Tidak ada lokasi ditemukan"
+    val placeholder: String = "Search location...",
+    val noResults: String = "No locations found"
 )
 
 @OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)

@@ -375,7 +375,7 @@ function App() {
                 value={themes.default.value}
                 onQueryChange={(q) => updateThemeState('default', q, null)}
                 onLocationSelect={(loc) => updateThemeState('default', formatLocation(loc), loc)}
-                texts={{ placeholder: 'Cari lokasi...' }}
+                texts={{ placeholder: 'Search location...' }}
               />
             </div>
             <p className="style-hint">
@@ -395,7 +395,7 @@ function App() {
                 value={themes.dark.value}
                 onQueryChange={(q) => updateThemeState('dark', q, null)}
                 onLocationSelect={(loc) => updateThemeState('dark', formatLocation(loc), loc)}
-                texts={{ placeholder: 'Cari lokasi...' }}
+                texts={{ placeholder: 'Search location...' }}
               />
             </div>
             <p className="style-hint">
@@ -415,7 +415,7 @@ function App() {
                 value={themes.emerald.value}
                 onQueryChange={(q) => updateThemeState('emerald', q, null)}
                 onLocationSelect={(loc) => updateThemeState('emerald', formatLocation(loc), loc)}
-                texts={{ placeholder: 'Cari lokasi...' }}
+                texts={{ placeholder: 'Search location...' }}
               />
             </div>
             <p className="style-hint" style={{ color: '#64748b' }}>
@@ -435,7 +435,7 @@ function App() {
                 value={themes.minimal.value}
                 onQueryChange={(q) => updateThemeState('minimal', q, null)}
                 onLocationSelect={(loc) => updateThemeState('minimal', formatLocation(loc), loc)}
-                texts={{ placeholder: 'Cari lokasi...' }}
+                texts={{ placeholder: 'Search location...' }}
               />
             </div>
             <p className="style-hint">

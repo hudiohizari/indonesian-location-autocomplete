@@ -57,7 +57,7 @@ The search query is debounced and queried locally or via an API client to instan
 
 ### 🌎 Cross-Platform Architecture & Asset Compatibility
 
-To guarantee that this library works flawlessly on **every single platform** without dependency conflicts, we decoupled the **search logic** from the **asset loading**:
+To guarantee that this library works flawlessly on **every single platform** without dependency conflicts, the **search logic** is decoupled from the **asset loading**:
 
 1. **Shared Pure Search Interface:** The core package exports a pure, stateless filtering engine `searchLocations(query, data)` which depends on zero platform-specific APIs.
 2. **Platform-Native Data Loading:** Each native UI component handles JSON loading using its ecosystem's native asset pipeline:
@@ -378,11 +378,6 @@ const styles = StyleSheet.create({
 
 #### Installation
 
-For **Maven Central**:
-```kotlin
-implementation("id.my.hizari.indonesianlocation:autocomplete:1.0.0")
-```
-
 For **JitPack**:
 
 1. Add the JitPack repository to your root `settings.gradle.kts`:
@@ -469,6 +464,101 @@ IndonesianLocationAutocomplete(
     }
 )
 ```
+### 4. iOS SwiftUI Component
+
+#### Installation (Swift Package Manager)
+
+To integrate the library package into your Xcode project:
+1. In Xcode, select **File > Add Package Dependencies...**
+2. Paste your repository URL: `https://github.com/hudiohizari/indonesian-location-autocomplete.git`
+3. Select the version tag (e.g. `v1.0.0`) or branch you wish to use.
+
+#### API Parameters Reference
+
+- `value: Binding<String>` (Required) - Controlled binding query.
+- `onQueryChange: (String) -> Void` (Required) - Keystroke callback.
+- `onLocationSelect: (LocationRecord) -> Void` (Required) - Selection callback.
+- `searchEngine: LocationSearchEngine?` (Optional) - Local search engine helper. (Optional when using `searchProvider`).
+- `maxResults: Int` - Maximum results. Default: `10`.
+- `minQueryLength: Int` - Minimum typing length. Default: `3`.
+- `debounceMs: Int` - Debounce search delay in ms. Default: `300`.
+- `texts: AutocompleteTexts` - Placeholder & Empty translations.
+- `enabled: Bool` - Interactive enablement state. Default: `true`.
+- `filter: ((LocationRecord) -> Bool)?` - Filter callback.
+- `searchProvider: ((String) async -> [LocationRecord])?` - Controlled async background search provider.
+
+#### Presets & Usecases Examples
+
+##### A. Standard Search
+```swift
+import SwiftUI
+import IndonesianLocationAutocomplete
+
+struct EasySearch: View {
+    @StateObject private var searchEngine = LocationSearchEngine()
+    @State private var query = ""
+
+    var body: some View {
+        IndonesianLocationAutocomplete(
+            value: $query,
+            onQueryChange: { query = $0 },
+            onLocationSelect: { loc in
+                query = "\(loc.village), \(loc.district)"
+            },
+            searchEngine: searchEngine
+        )
+    }
+}
+```
+
+##### B. Dynamic Parent Filtering
+```swift
+import SwiftUI
+import IndonesianLocationAutocomplete
+
+struct FilteredSearch: View {
+    @StateObject private var searchEngine = LocationSearchEngine()
+    @State private var query = ""
+    @State private var targetProvince = "DKI Jakarta"
+
+    var body: some View {
+        IndonesianLocationAutocomplete(
+            value: $query,
+            onQueryChange: { query = $0 },
+            onLocationSelect: { loc in
+                query = "\(loc.village), \(loc.district)"
+            },
+            searchEngine: searchEngine,
+            filter: { loc in loc.province == targetProvince }
+        )
+    }
+}
+```
+
+##### C. Custom Async Provider (Core Search on Server / API)
+```swift
+import SwiftUI
+import IndonesianLocationAutocomplete
+
+struct RemoteSearch: View {
+    @State private var query = ""
+    @State private var results: [LocationRecord] = []
+
+    var body: some View {
+        IndonesianLocationAutocomplete(
+            value: $query,
+            onQueryChange: { query = $0 },
+            onLocationSelect: { loc in
+                query = loc.village
+            },
+            searchProvider: { q in
+                // Executes off-thread to query your custom REST API or Local Database
+                return await myApi.fetchLocations(query: q)
+            }
+        )
+    }
+}
+```
 
 ---
 
@@ -478,27 +568,27 @@ IndonesianLocationAutocomplete(
 - [x] React Native (Android)
 - [x] React Native (iOS)
 - [x] Android Jetpack Compose (Kotlin 1.9+, Android SDK 24+)
-- [ ] iOS SwiftUI (iOS 15+, Swift 5.9+)
+- [x] iOS SwiftUI (iOS 15+, Swift 5.9+)
 
 ## Distribution & Publishing Targets
 
-To ensure simple installation across different tech stacks, native packages are published directly to the standard registry of each platform:
+Native packages are published directly to the standard registry of each platform:
 
 - **React JS & React Native:** [npm Registry](https://www.npmjs.com/)
 - **Android Jetpack Compose:** [Maven Central](https://search.maven.org/) / [JitPack](https://jitpack.io/)
+- **iOS SwiftUI:** [Swift Package Manager (GitHub)](https://github.com/apple/swift-package-manager)
 
 ## Library Deployment Status
 
 - [x] `@hudiohizari/indonesian-location-autocomplete` (npm - Unified Web & React Native)
-- [ ] `com.github.indonesian-location-autocomplete` (Maven Central / JitPack)
+- [x] `com.github.hudiohizari:indonesian-location-autocomplete` (JitPack - Android)
+- [x] `IndonesianLocationAutocomplete` (Swift Package Manager - iOS)
 
 ---
 
 ## Deployment & Publishing Guide
 
 ### 1. React & React Native (npm)
-
-We publish the unified React & React Native package directly to npm:
 
 1. Log in to npm:
    ```bash
@@ -509,9 +599,9 @@ We publish the unified React & React Native package directly to npm:
    npm publish --workspace=packages/react --access public
    ```
 
-### 2. Android Jetpack Compose (JitPack / Maven Central)
+### 2. Android Jetpack Compose (JitPack)
 
-Android packages are distributed via JitPack for streamlined GitHub release tag builds:
+Android packages are distributed via JitPack using GitHub release tags:
 
 1. Apply the `maven-publish` plugin in `packages/android/build.gradle`.
 2. Configure a `jitpack.yml` at the root of the project if specific JDK versions are required.
@@ -519,7 +609,7 @@ Android packages are distributed via JitPack for streamlined GitHub release tag 
 
 ### 3. Automated CI/CD (GitHub Actions)
 
-We have configured fully automated continuous integration and deployment pipelines under `.github/workflows`:
+Continuous integration and deployment pipelines are configured under `.github/workflows`:
 
 #### Continuous Integration (`ci.yml`)
 * Automatically triggers on every push and pull request to the `main` branch.
@@ -527,7 +617,7 @@ We have configured fully automated continuous integration and deployment pipelin
 * Sets up JDK 17 to validate that the Android library (`packages/android`) compiles successfully.
 
 #### Automated NPM Release (`release.yml`)
-* Automatically publishes workspace packages to the npm Registry when you push a version tag (e.g. `v1.0.0`).
+* Automatically publishes workspace packages to the npm Registry when a version tag is pushed (e.g. `v1.0.0`).
 * Runs all test validations first before deploying.
 * Publishes the core library (`@hudiohizari/indonesian-location-autocomplete-core`) followed by the React library (`@hudiohizari/indonesian-location-autocomplete`) sequentially.
 
@@ -535,7 +625,7 @@ We have configured fully automated continuous integration and deployment pipelin
 1. Generate an Access Token (Publish type) on [npm](https://www.npmjs.com/).
 2. In your GitHub repository settings, navigate to **Settings > Secrets and variables > Actions**.
 3. Create a new repository secret named `NPM_TOKEN` and paste your npm Access Token.
-4. When you're ready to publish, tag the commit and push it:
+4. When ready to publish, tag the commit and push:
    ```bash
    git tag v1.0.0
    git push origin v1.0.0

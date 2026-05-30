@@ -150,7 +150,7 @@ export default function App() {
                 value={themes.dark.value}
                 onQueryChange={(q) => updateThemeState('dark', q, null)}
                 onLocationSelect={(loc) => updateThemeState('dark', formatLocation(loc), loc)}
-                texts={{ placeholder: 'Cari lokasi...' }}
+                texts={{ placeholder: 'Search location...' }}
                 inputWrapperStyle={styles.darkInputWrapper}
                 inputStyle={styles.darkInput}
                 dropdownStyle={styles.darkDropdown}
