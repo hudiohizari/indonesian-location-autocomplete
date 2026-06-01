@@ -11,6 +11,22 @@ This monorepo contains native implementations for all major frontend frameworks 
 - **Android Jetpack Compose (Kotlin):** Premium native Compose UI component with material elements and smooth entry transitions.
 - **Swift (iOS/SwiftUI):** Native Declarative SwiftUI component with standard iOS layouts.
 
+## Previews
+
+### React (Web)
+
+![React Web Preview](./assets/react-web-preview.gif)
+
+### React Native (Mobile)
+
+![React Native Preview](./assets/react-native-preview.gif)
+
+### Android (Jetpack Compose)
+
+![Android Preview](./assets/android-preview.gif)
+
+_(iOS SwiftUI preview coming soon)_
+
 ## Monorepo Layout
 
 ```
@@ -101,34 +117,37 @@ npm install @hudiohizari/indonesian-location-autocomplete-core @hudiohizari/indo
 #### Presets & Usecases Examples
 
 ##### A. Zero-Configuration Pre-Bundled Component (Instant Setup)
+
 If you want a robust, out-of-the-box local autocomplete component without importing or managing the postcode dataset manually:
+
 ```tsx
-import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import { useState } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
 
 function EasySearch() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <IndonesianLocationAutocomplete
       value={value}
       onQueryChange={setValue}
       onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
     />
-  )
+  );
 }
 ```
 
 ##### B. Custom Local JSON Search Mode (Flexible Loading)
-```tsx
-import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
-import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
-import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
-const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+```tsx
+import { useState } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
+import postcodeDataRaw from "@hudiohizari/indonesian-location-autocomplete-core/data";
+import type { LocationRecord } from "@hudiohizari/indonesian-location-autocomplete";
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[];
 
 function CustomSearch() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <IndonesianLocationAutocomplete
       value={value}
@@ -136,22 +155,23 @@ function CustomSearch() {
       onQueryChange={setValue}
       onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
     />
-  )
+  );
 }
 ```
 
 ##### C. Dynamic Parent Filtering (Chained Dropdowns)
-```tsx
-import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
-import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
-import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
-const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+```tsx
+import { useState } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
+import postcodeDataRaw from "@hudiohizari/indonesian-location-autocomplete-core/data";
+import type { LocationRecord } from "@hudiohizari/indonesian-location-autocomplete";
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[];
 
 function ChainedDropdowns() {
-  const [value, setValue] = useState('')
-  const [selectedProvince, setSelectedProvince] = useState('Jawa Barat')
+  const [value, setValue] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("Jawa Barat");
 
   return (
     <IndonesianLocationAutocomplete
@@ -160,10 +180,10 @@ function ChainedDropdowns() {
       onQueryChange={setValue}
       onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
       searchOptions={{
-        filter: (loc) => loc.province === selectedProvince
+        filter: (loc) => loc.province === selectedProvince,
       }}
     />
-  )
+  );
 }
 ```
 
@@ -173,24 +193,24 @@ function ChainedDropdowns() {
 > To minimize your client bundle size, you can install `@hudiohizari/indonesian-location-autocomplete-core` directly on your server/backend (Node.js, Bun, Deno). Your backend API can import `searchLocations` and query the raw JSON database, allowing you to feed results to the frontend via `searchResults` without sending the 15MB database to the browser.
 
 ```tsx
-import { useState, useEffect } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import { useState, useEffect } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
 
 function RemoteAPISearch() {
-  const [value, setValue] = useState('')
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [value, setValue] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (value.length < 3) return
-    setLoading(true)
+    if (value.length < 3) return;
+    setLoading(true);
     fetch(`/api/locations?q=${value}`)
-      .then(res => res.json())
-      .then(data => {
-        setResults(data)
-        setLoading(false)
-      })
-  }, [value])
+      .then((res) => res.json())
+      .then((data) => {
+        setResults(data);
+        setLoading(false);
+      });
+  }, [value]);
 
   return (
     <IndonesianLocationAutocomplete
@@ -200,7 +220,7 @@ function RemoteAPISearch() {
       searchResults={results}
       isLoading={loading}
     />
-  )
+  );
 }
 ```
 
@@ -272,34 +292,37 @@ npm install @hudiohizari/indonesian-location-autocomplete-core @hudiohizari/indo
 #### Presets & Usecases Examples
 
 ##### A. Zero-Configuration Pre-Bundled Component (Instant Setup)
+
 If you want a robust, out-of-the-box local autocomplete component without importing or managing the postcode dataset manually:
+
 ```tsx
-import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
+import { useState } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
 
 function EasySearch() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <IndonesianLocationAutocomplete
       value={value}
       onQueryChange={setValue}
       onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
     />
-  )
+  );
 }
 ```
 
 ##### B. Custom Search (Local JSON Data - Flexible Loading)
-```tsx
-import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
-import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
-import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
-const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+```tsx
+import { useState } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
+import postcodeDataRaw from "@hudiohizari/indonesian-location-autocomplete-core/data";
+import type { LocationRecord } from "@hudiohizari/indonesian-location-autocomplete";
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[];
 
 function CustomSearch() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <IndonesianLocationAutocomplete
       value={value}
@@ -307,22 +330,23 @@ function CustomSearch() {
       onQueryChange={setValue}
       onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
     />
-  )
+  );
 }
 ```
 
 ##### C. Dynamic Parent Filtering (Chained Dropdowns)
-```tsx
-import { useState } from 'react'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
-import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
-import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
-const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+```tsx
+import { useState } from "react";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
+import postcodeDataRaw from "@hudiohizari/indonesian-location-autocomplete-core/data";
+import type { LocationRecord } from "@hudiohizari/indonesian-location-autocomplete";
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[];
 
 function ChainedDropdowns() {
-  const [value, setValue] = useState('')
-  const [selectedProvince] = useState('DKI Jakarta')
+  const [value, setValue] = useState("");
+  const [selectedProvince] = useState("DKI Jakarta");
 
   return (
     <IndonesianLocationAutocomplete
@@ -331,25 +355,26 @@ function ChainedDropdowns() {
       onQueryChange={setValue}
       onLocationSelect={(loc) => setValue(`${loc.village}, ${loc.district}`)}
       searchOptions={{
-        filter: (loc) => loc.province === selectedProvince
+        filter: (loc) => loc.province === selectedProvince,
       }}
     />
-  )
+  );
 }
 ```
 
 ##### D. Custom Styling (Dark Mode Accent)
-```tsx
-import { useState } from 'react'
-import { StyleSheet } from 'react-native'
-import { IndonesianLocationAutocomplete } from '@hudiohizari/indonesian-location-autocomplete'
-import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
-import type { LocationRecord } from '@hudiohizari/indonesian-location-autocomplete'
 
-const postcodeData = postcodeDataRaw as unknown as LocationRecord[]
+```tsx
+import { useState } from "react";
+import { StyleSheet } from "react-native";
+import { IndonesianLocationAutocomplete } from "@hudiohizari/indonesian-location-autocomplete";
+import postcodeDataRaw from "@hudiohizari/indonesian-location-autocomplete-core/data";
+import type { LocationRecord } from "@hudiohizari/indonesian-location-autocomplete";
+
+const postcodeData = postcodeDataRaw as unknown as LocationRecord[];
 
 function DarkModeSearch() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <IndonesianLocationAutocomplete
       value={value}
@@ -361,15 +386,15 @@ function DarkModeSearch() {
       dropdownStyle={styles.dropdown}
       itemTextStyle={styles.itemText}
     />
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  wrapper: { backgroundColor: '#1e293b', borderColor: '#475569' },
-  input: { color: '#f8fafc' },
-  dropdown: { backgroundColor: '#1e293b', borderColor: '#475569' },
-  itemText: { color: '#f8fafc' }
-})
+  wrapper: { backgroundColor: "#1e293b", borderColor: "#475569" },
+  input: { color: "#f8fafc" },
+  dropdown: { backgroundColor: "#1e293b", borderColor: "#475569" },
+  itemText: { color: "#f8fafc" },
+});
 ```
 
 ---
@@ -381,6 +406,7 @@ const styles = StyleSheet.create({
 For **JitPack**:
 
 1. Add the JitPack repository to your root `settings.gradle.kts`:
+
 ```kotlin
 dependencyResolutionManagement {
     repositories {
@@ -392,6 +418,7 @@ dependencyResolutionManagement {
 ```
 
 2. Add the dependency to your app's `build.gradle.kts`:
+
 ```kotlin
 implementation("com.github.hudiohizari:indonesian-location-autocomplete:v1.0.2")
 ```
@@ -464,11 +491,13 @@ IndonesianLocationAutocomplete(
     }
 )
 ```
+
 ### 4. iOS SwiftUI Component
 
 #### Installation (Swift Package Manager)
 
 To integrate the library package into your Xcode project:
+
 1. In Xcode, select **File > Add Package Dependencies...**
 2. Paste your repository URL: `https://github.com/hudiohizari/indonesian-location-autocomplete.git`
 3. Select the version tag (e.g. `v1.0.2`) or branch you wish to use.
@@ -490,6 +519,7 @@ To integrate the library package into your Xcode project:
 #### Presets & Usecases Examples
 
 ##### A. Standard Search
+
 ```swift
 import SwiftUI
 import IndonesianLocationAutocomplete
@@ -512,6 +542,7 @@ struct EasySearch: View {
 ```
 
 ##### B. Dynamic Parent Filtering
+
 ```swift
 import SwiftUI
 import IndonesianLocationAutocomplete
@@ -536,6 +567,7 @@ struct FilteredSearch: View {
 ```
 
 ##### C. Custom Async Provider (Core Search on Server / API)
+
 ```swift
 import SwiftUI
 import IndonesianLocationAutocomplete
@@ -568,7 +600,7 @@ struct RemoteSearch: View {
 - [x] React Native (Android)
 - [x] React Native (iOS)
 - [x] Android Jetpack Compose (Kotlin 1.9+, Android SDK 24+)
-- [x] iOS SwiftUI (iOS 15+, Swift 5.9+)
+- [ ] iOS SwiftUI (iOS 15+, Swift 5.9+)
 
 ## Distribution & Publishing Targets
 
@@ -612,23 +644,26 @@ Android packages are distributed via JitPack using GitHub release tags:
 Continuous integration and deployment pipelines are configured under `.github/workflows`:
 
 #### Continuous Integration (`ci.yml`)
-* Automatically triggers on every push and pull request to the `main` branch.
-* Installs monorepo dependencies, runs core search engine unit tests, typechecks both JavaScript/TypeScript components (`packages/core` & `packages/react`), and builds the React web demo workspace.
-* Sets up JDK 17 to validate that the Android library (`packages/android`) compiles successfully.
+
+- Automatically triggers on every push and pull request to the `main` branch.
+- Installs monorepo dependencies, runs core search engine unit tests, typechecks both JavaScript/TypeScript components (`packages/core` & `packages/react`), and builds the React web demo workspace.
+- Sets up JDK 17 to validate that the Android library (`packages/android`) compiles successfully.
 
 #### Automated NPM Release (`release.yml`)
-* Automatically publishes workspace packages to the npm Registry when a version tag is pushed (e.g. `v1.0.2`).
-* Runs all test validations first before deploying.
-* Publishes the core library (`@hudiohizari/indonesian-location-autocomplete-core`) followed by the React library (`@hudiohizari/indonesian-location-autocomplete`) sequentially.
+
+- Automatically publishes workspace packages to the npm Registry when a version tag is pushed (e.g. `v1.0.3`).
+- Runs all test validations first before deploying.
+- Publishes the core library (`@hudiohizari/indonesian-location-autocomplete-core`) followed by the React library (`@hudiohizari/indonesian-location-autocomplete`) sequentially.
 
 **Setup Instructions**:
+
 1. Generate an Access Token (Publish type) on [npm](https://www.npmjs.com/).
 2. In your GitHub repository settings, navigate to **Settings > Secrets and variables > Actions**.
 3. Create a new repository secret named `NPM_TOKEN` and paste your npm Access Token.
 4. When ready to publish, tag the commit and push:
    ```bash
-   git tag v1.0.2
-   git push origin v1.0.2
+   git tag v1.0.3
+   git push origin v1.0.3
    ```
 
 ---
