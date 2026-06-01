@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import id.my.hizari.indonesianlocation.autocomplete.engine.LocationSearchEngine
 import id.my.hizari.indonesianlocation.autocomplete.model.LocationRecord
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import id.my.hizari.indonesianlocation.autocomplete.ui.IndonesianLocationAutocomplete
 import id.my.hizari.indonesianlocation.autocomplete.ui.AutocompleteTexts
 import androidx.compose.material.icons.Icons
@@ -32,6 +34,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         
         val searchEngine = LocationSearchEngine(applicationContext)
+        lifecycleScope.launch {
+            searchEngine.init()
+        }
 
         setContent {
             MaterialTheme {

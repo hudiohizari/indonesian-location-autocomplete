@@ -420,8 +420,22 @@ dependencyResolutionManagement {
 2. Add the dependency to your app's `build.gradle.kts`:
 
 ```kotlin
-implementation("com.github.hudiohizari:indonesian-location-autocomplete:v1.0.2")
+implementation("com.github.hudiohizari:indonesian-location-autocomplete:v1.0.4")
 ```
+
+> [!TIP]
+> **Performance Optimization (Eager Loading):**
+> Because the postcode database is a relatively large JSON dataset (~15MB), parsing it on the first search can cause a minor delay. You can eager-load the database in the background at app startup (e.g. in your Activity's `onCreate`) to ensure searches are instant from the very first keystroke:
+>
+> ```kotlin
+> val searchEngine = LocationSearchEngine(applicationContext)
+> // Eagerly pre-load database in the background
+> lifecycleScope.launch {
+>     searchEngine.init()
+> }
+> ```
+>
+> Alternatively, the `IndonesianLocationAutocomplete` composable will automatically start background pre-loading in a `LaunchedEffect` as soon as it is composed.
 
 #### API Parameters Reference
 
@@ -500,7 +514,7 @@ To integrate the library package into your Xcode project:
 
 1. In Xcode, select **File > Add Package Dependencies...**
 2. Paste your repository URL: `https://github.com/hudiohizari/indonesian-location-autocomplete.git`
-3. Select the version tag (e.g. `v1.0.2`) or branch you wish to use.
+3. Select the version tag (e.g. `v1.0.4`) or branch you wish to use.
 
 #### API Parameters Reference
 

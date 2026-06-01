@@ -26,6 +26,10 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 
 data class AutocompleteTexts(
     val placeholder: String = "Search location...",
@@ -45,25 +49,39 @@ fun IndonesianLocationAutocomplete(
     debounceMs: Long = 300L,
     texts: AutocompleteTexts = AutocompleteTexts(),
     enabled: Boolean = true,
-    shape: androidx.compose.ui.graphics.Shape = OutlinedTextFieldDefaults.shape,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    textStyle: TextStyle = TextStyle.Default,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(8.dp),
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = Color(0xFF6366F1),
+        unfocusedBorderColor = Color(0xFFD1D5DB),
+        focusedTextColor = Color(0xFF1F2937),
+        unfocusedTextColor = Color(0xFF1F2937),
+        focusedContainerColor = Color.White,
+        unfocusedContainerColor = Color.White,
+        focusedPlaceholderColor = Color(0xFF9CA3AF),
+        unfocusedPlaceholderColor = Color(0xFF9CA3AF),
+        focusedLeadingIconColor = Color(0xFF9CA3AF),
+        unfocusedLeadingIconColor = Color(0xFF9CA3AF)
+    ),
+    textStyle: TextStyle = TextStyle.Default.copy(color = Color(0xFF1F2937)),
     dropdownModifier: Modifier = Modifier,
     itemPrimaryTextStyle: TextStyle = TextStyle.Default,
-    itemPrimaryTextColor: Color = Color.Unspecified,
+    itemPrimaryTextColor: Color = Color(0xFF1F2937),
     itemSecondaryTextStyle: TextStyle = TextStyle.Default,
-    itemSecondaryTextColor: Color = Color.Unspecified,
-    itemIconTint: Color = Color.Unspecified,
+    itemSecondaryTextColor: Color = Color(0xFF6B7280),
+    itemIconTint: Color = Color(0xFF9CA3AF),
     leadingIcon: @Composable (() -> Unit)? = {
         Icon(
             imageVector = Icons.Default.Place,
-            contentDescription = "Location Pin"
+            contentDescription = "Location Pin",
+            tint = Color(0xFF9CA3AF),
+            modifier = Modifier.size(18.dp)
         )
     },
     loaderContent: @Composable (() -> Unit)? = {
         CircularProgressIndicator(
-            modifier = Modifier.size(20.dp),
-            strokeWidth = 2.dp
+            modifier = Modifier.size(16.dp),
+            strokeWidth = 2.dp,
+            color = Color(0xFF6366F1)
         )
     },
     itemContent: @Composable (ColumnScope.(LocationRecord) -> Unit)? = null,
@@ -84,6 +102,11 @@ fun IndonesianLocationAutocomplete(
         if (!isOpen) {
             query = value
         }
+    }
+
+    // Pre-initialize the search engine when the component is composed
+    LaunchedEffect(searchEngine) {
+        searchEngine?.init()
     }
 
     // Flow representing manual keystroke search queries
@@ -202,6 +225,9 @@ fun IndonesianLocationAutocomplete(
             properties = PopupProperties(focusable = false),
             modifier = Modifier
                 .exposedDropdownSize()
+                .background(Color.White, RoundedCornerShape(8.dp))
+                .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(8.dp))
+                .padding(4.dp)
                 .then(dropdownModifier)
         ) {
             if (results.isEmpty()) {
@@ -213,11 +239,14 @@ fun IndonesianLocationAutocomplete(
                             Text(
                                 text = texts.noResults,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = Color(0xFF6B7280)
                             )
                         },
                         onClick = {},
-                        enabled = false
+                        enabled = false,
+                        colors = MenuDefaults.itemColors(
+                            disabledTextColor = Color(0xFF6B7280)
+                        )
                     )
                 }
             } else {
@@ -227,7 +256,7 @@ fun IndonesianLocationAutocomplete(
                             text = { itemContent(loc) },
                             onClick = { handleSelect(loc) },
                             leadingIcon = null,
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
                         )
                     } else {
                         DropdownMenuItem(
@@ -235,14 +264,16 @@ fun IndonesianLocationAutocomplete(
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Text(
                                         text = "${loc.village}, ${loc.district}",
-                                        style = if (itemPrimaryTextStyle != TextStyle.Default) itemPrimaryTextStyle else MaterialTheme.typography.bodyLarge,
-                                        color = if (itemPrimaryTextColor != Color.Unspecified) itemPrimaryTextColor else MaterialTheme.colorScheme.onSurface
+                                        style = if (itemPrimaryTextStyle != TextStyle.Default) itemPrimaryTextStyle else MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = FontWeight.Medium
+                                        ),
+                                        color = itemPrimaryTextColor
                                     )
-                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Spacer(modifier = Modifier.height(1.dp))
                                     Text(
                                         text = "${loc.regency}, ${loc.province} - ${loc.code}",
-                                        style = if (itemSecondaryTextStyle != TextStyle.Default) itemSecondaryTextStyle else MaterialTheme.typography.bodyMedium,
-                                        color = if (itemSecondaryTextColor != Color.Unspecified) itemSecondaryTextColor else MaterialTheme.colorScheme.onSurfaceVariant
+                                        style = if (itemSecondaryTextStyle != TextStyle.Default) itemSecondaryTextStyle else MaterialTheme.typography.bodySmall,
+                                        color = itemSecondaryTextColor
                                     )
                                 }
                             },
@@ -251,11 +282,16 @@ fun IndonesianLocationAutocomplete(
                                 Icon(
                                     imageVector = Icons.Default.Place,
                                     contentDescription = null,
-                                    tint = if (itemIconTint != Color.Unspecified) itemIconTint else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(20.dp)
+                                    tint = itemIconTint,
+                                    modifier = Modifier.size(16.dp)
                                 )
                             },
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+                            colors = MenuDefaults.itemColors(
+                                textColor = itemPrimaryTextColor,
+                                leadingIconColor = itemIconTint,
+                                trailingIconColor = itemIconTint
+                            )
                         )
                     }
                 }
