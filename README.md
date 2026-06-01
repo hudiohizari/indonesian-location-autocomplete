@@ -15,15 +15,15 @@ This monorepo contains native implementations for all major frontend frameworks 
 
 ### React (Web)
 
-![React Web Preview](./assets/react-web-preview.gif)
+<img src="./assets/react-web-preview.gif" width="700" alt="React Web Preview" />
 
 ### React Native (Mobile)
 
-![React Native Preview](./assets/react-native-preview.gif)
+<img src="./assets/react-native-preview.gif" width="320" alt="React Native Preview" />
 
 ### Android (Jetpack Compose)
 
-![Android Preview](./assets/android-preview.gif)
+<img src="./assets/android-preview.gif" width="320" alt="Android Preview" />
 
 _(iOS SwiftUI preview coming soon)_
 

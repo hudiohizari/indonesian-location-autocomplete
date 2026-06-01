@@ -8,8 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@hudiohizari/indonesian-location-autocomplete-core": "1.0.3",
-    "@hudiohizari/indonesian-location-autocomplete": "1.0.3",
+    "@hudiohizari/indonesian-location-autocomplete-core": "1.0.4",
+    "@hudiohizari/indonesian-location-autocomplete": "1.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
