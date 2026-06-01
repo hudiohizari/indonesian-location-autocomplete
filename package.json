@@ -19,6 +19,9 @@
   "devDependencies": {
     "vitest": "^1.6.0"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.60.4"
+  },
   "keywords": [
     "indonesia",
     "location",

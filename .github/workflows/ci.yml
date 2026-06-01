@@ -64,4 +64,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and Test Swift Package
-        run: swift test --package-path packages/ios
+        run: |
+          cd packages/ios
+          xcodebuild test -scheme IndonesianLocationAutocomplete -destination "platform=iOS Simulator,name=iPhone 15"
