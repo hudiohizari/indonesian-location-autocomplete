@@ -83,7 +83,7 @@ public struct IndonesianLocationAutocomplete: View {
                     .font(.body)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
-                    .onChange(of: query) { _, newValue in
+                    .onChange(of: query) { newValue in
                         if isSelecting {
                             isSelecting = false
                             return
@@ -94,7 +94,7 @@ public struct IndonesianLocationAutocomplete: View {
                     .onAppear {
                         query = value
                     }
-                    .onChange(of: value) { _, newValue in
+                    .onChange(of: value) { newValue in
                         if !isOpen {
                             query = newValue
                         }

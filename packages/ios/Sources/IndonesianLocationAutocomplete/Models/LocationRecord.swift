@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LocationRecord: Codable, Identifiable, Hashable {
+public struct LocationRecord: Codable, Identifiable, Hashable, Sendable {
     public let code: Int
     public let village: String
     public let district: String
