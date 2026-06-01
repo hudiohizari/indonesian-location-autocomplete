@@ -1,6 +1,6 @@
 {
   "name": "@hudiohizari/indonesian-location-autocomplete-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Core search engine and data types for Indonesian location autocomplete",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
