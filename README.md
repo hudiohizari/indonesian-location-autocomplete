@@ -25,7 +25,9 @@ This monorepo contains native implementations for all major frontend frameworks 
 
 <img src="./assets/android-preview.gif" width="320" alt="Android Preview" />
 
-_(iOS SwiftUI preview coming soon)_
+### iOS (SwiftUI)
+
+<img src="./assets/ios-preview.gif" width="320" alt="iOS SwiftUI Preview" />
 
 ## Monorepo Layout
 
@@ -47,6 +49,7 @@ indonesian-location-autocomplete/
     ├── react-native-demo/     # React Native Expo App playground
     ├── android-demo/          # Native Kotlin Jetpack Compose App
     └── ios-demo/              # Native Swift / SwiftUI Xcode App
+
 ```
 
 ## Example Projects
