@@ -34,6 +34,7 @@ public struct IndonesianLocationAutocomplete: View {
 
     // UI Formatting customization
     public var formatSelectedLocation: (LocationRecord) -> String = { "\($0.village), \($0.district), \($0.regency), \($0.province) - \($0.code)" }
+    public var renderEmptyState: ((String) -> AnyView)? = nil
 
     @State private var query: String = ""
     @State private var results: [LocationRecord] = []
@@ -54,7 +55,8 @@ public struct IndonesianLocationAutocomplete: View {
         enabled: Bool = true,
         filter: ((LocationRecord) -> Bool)? = nil,
         searchProvider: ((String) async -> [LocationRecord])? = nil,
-        formatSelectedLocation: @escaping (LocationRecord) -> String = { "\($0.village), \($0.district), \($0.regency), \($0.province) - \($0.code)" }
+        formatSelectedLocation: @escaping (LocationRecord) -> String = { "\($0.village), \($0.district), \($0.regency), \($0.province) - \($0.code)" },
+        renderEmptyState: ((String) -> AnyView)? = nil
     ) {
         self._value = value
         self.onQueryChange = onQueryChange
@@ -68,6 +70,7 @@ public struct IndonesianLocationAutocomplete: View {
         self.filter = filter
         self.searchProvider = searchProvider
         self.formatSelectedLocation = formatSelectedLocation
+        self.renderEmptyState = renderEmptyState
     }
 
     public var body: some View {
@@ -116,14 +119,18 @@ public struct IndonesianLocationAutocomplete: View {
             )
             
             // Dropdown Suggestion List Overlay popup
-            if isOpen && (!results.isEmpty || query.trimmingCharacters(in: .whitespacesAndNewlines).count >= minQueryLength) {
+            if isOpen && (!results.isEmpty || (query.trimmingCharacters(in: .whitespacesAndNewlines).count >= minQueryLength && !isSearching)) {
                 VStack(alignment: .leading, spacing: 0) {
                     if results.isEmpty {
-                        Text(texts.noResults)
-                            .foregroundColor(.secondary)
-                            .font(.subheadline)
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        if let renderEmptyState = renderEmptyState {
+                            renderEmptyState(query)
+                        } else {
+                            Text(texts.noResults)
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     } else {
                         ScrollView {
                             LazyVStack(alignment: .leading, spacing: 0) {

@@ -24,9 +24,30 @@ struct CustomEmptyShowcase: View {
                 },
                 searchEngine: searchEngine,
                 texts: AutocompleteTexts(
-                    placeholder: "Cari dengan nama acak...",
-                    noResults: "Lokasi tidak ditemukan"
-                )
+                    placeholder: "Cari dengan nama acak..."
+                ),
+                renderEmptyState: { q in
+                    AnyView(
+                        VStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .foregroundColor(.red)
+                                .font(.system(size: 24))
+                            
+                            Text("No Matches Found")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                            
+                            Text("We couldn't find any location matching \"\(q)\"")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical, 16)
+                        .frame(maxWidth: .infinity)
+                    )
+                }
             )
         }
     }

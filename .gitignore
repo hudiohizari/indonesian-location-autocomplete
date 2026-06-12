@@ -43,3 +43,6 @@ captures/
 !*.xcworkspace/contents.xcworkspacedata
 DerivedData/
 Pods/
+.build/
+xcuserdata/
+*.xcuserstate

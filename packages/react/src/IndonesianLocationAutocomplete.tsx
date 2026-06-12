@@ -10,10 +10,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { searchLocations } from '@hudiohizari/indonesian-location-autocomplete-core'
 import type { LocationRecord, SearchOptions } from '@hudiohizari/indonesian-location-autocomplete-core'
-import postcodeDataRaw from '@hudiohizari/indonesian-location-autocomplete-core/data'
 import styles from './IndonesianLocationAutocomplete.module.css'
-
-const defaultPostcodeData = postcodeDataRaw as unknown as LocationRecord[]
 
 /** Props for customizing displayed text (i18n support). */
 export interface AutocompleteTexts {
@@ -78,7 +75,7 @@ export function IndonesianLocationAutocomplete({
   value,
   onLocationSelect,
   onQueryChange,
-  data = defaultPostcodeData,
+  data,
   searchResults,
   isLoading,
   debounceMs = 300,
@@ -96,6 +93,9 @@ export function IndonesianLocationAutocomplete({
   dropdownStyle,
   disabled = false,
 }: IndonesianLocationAutocompleteProps) {
+  const [internalData, setInternalData] = useState<LocationRecord[]>([])
+  const [isDataLoading, setIsDataLoading] = useState(false)
+
   const [query, setQuery] = useState(value)
   const [results, setResults] = useState<LocationRecord[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -113,8 +113,27 @@ export function IndonesianLocationAutocomplete({
   const noResultsText = texts?.noResults ?? 'No locations found'
   const minLen = searchOptions?.minQueryLength ?? 3
 
-  const isCurrentlyLoading = isLoading !== undefined ? isLoading : internalIsLoading
+  const isCurrentlyLoading = isLoading !== undefined
+    ? isLoading
+    : (internalIsLoading || isDataLoading)
   const activeResults = searchResults !== undefined ? searchResults : results
+  const activeData = data !== undefined ? data : internalData
+
+  // Dynamic load local database if using internal search mode and data is not loaded yet
+  useEffect(() => {
+    if (searchResults === undefined && data === undefined && internalData.length === 0 && !isDataLoading) {
+      setIsDataLoading(true)
+      import('@hudiohizari/indonesian-location-autocomplete-core/data')
+        .then((module) => {
+          setInternalData(module.default as unknown as LocationRecord[])
+          setIsDataLoading(false)
+        })
+        .catch((err) => {
+          console.error('Failed to load Indonesian location database dynamically:', err)
+          setIsDataLoading(false)
+        })
+    }
+  }, [data, searchResults, internalData, isDataLoading])
 
   // Sync external value changes (only when not actively typing)
   useEffect(() => {
@@ -125,7 +144,7 @@ export function IndonesianLocationAutocomplete({
     }
   }, [value, isOpen])
 
-  // Close dropdown on click outside
+  // Close dropdown on click or focus outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -133,8 +152,18 @@ export function IndonesianLocationAutocomplete({
         setActiveIndex(-1)
       }
     }
+    const handleFocusOutside = (e: FocusEvent) => {
+      if (containerRef.current && !containerRef.current.contains(document.activeElement)) {
+        setIsOpen(false)
+        setActiveIndex(-1)
+      }
+    }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('focusin', handleFocusOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('focusin', handleFocusOutside)
+    }
   }, [])
 
   // Debounced search
@@ -149,7 +178,7 @@ export function IndonesianLocationAutocomplete({
       return
     }
 
-    if (!data || query.trim().length < minLen) {
+    if (!activeData || activeData.length === 0 || query.trim().length < minLen) {
       setResults([])
       setInternalIsLoading(false)
       return
@@ -159,7 +188,7 @@ export function IndonesianLocationAutocomplete({
     setInternalIsLoading(true)
 
     const handler = setTimeout(() => {
-      const matches = searchLocations(query, data, searchOptionsRef.current)
+      const matches = searchLocations(query, activeData, searchOptionsRef.current)
       setResults(matches)
       setInternalIsLoading(false)
       if (isUserTyping.current) {
@@ -169,7 +198,7 @@ export function IndonesianLocationAutocomplete({
     }, debounceMs)
 
     return () => clearTimeout(handler)
-  }, [query, data, debounceMs, minLen, searchResults])
+  }, [query, activeData, debounceMs, minLen, searchResults])
 
   // Scroll active item into view
   useEffect(() => {

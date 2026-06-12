@@ -128,6 +128,16 @@ export function IndonesianLocationAutocomplete({
   const isUserTyping = useRef(false)
   const searchOptionsRef = useRef(searchOptions)
   searchOptionsRef.current = searchOptions
+  const blurTimeoutRef = useRef<any>(null)
+
+  // Cleanup blur timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const placeholder = texts?.placeholder ?? 'Search location...'
   const noResultsText = texts?.noResults ?? 'No locations found'
@@ -178,6 +188,9 @@ export function IndonesianLocationAutocomplete({
 
   const handleSelect = useCallback(
     (loc: LocationRecord) => {
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current)
+      }
       isSelecting.current = true
       isUserTyping.current = false
       const formatted = formatSelectedLocation
@@ -238,6 +251,11 @@ export function IndonesianLocationAutocomplete({
             if (activeResults.length > 0) {
               setIsOpen(true)
             }
+          }}
+          onBlur={() => {
+            blurTimeoutRef.current = setTimeout(() => {
+              setIsOpen(false)
+            }, 150)
           }}
         />
 

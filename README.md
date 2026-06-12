@@ -617,7 +617,7 @@ struct RemoteSearch: View {
 - [x] React Native (Android)
 - [x] React Native (iOS)
 - [x] Android Jetpack Compose (Kotlin 1.9+, Android SDK 24+)
-- [ ] iOS SwiftUI (iOS 15+, Swift 5.9+)
+- [x] iOS SwiftUI (iOS 15+, Swift 5.9+)
 
 ## Distribution & Publishing Targets
 
