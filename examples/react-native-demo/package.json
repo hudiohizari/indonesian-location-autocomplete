@@ -1,10 +1,10 @@
 {
   "name": "react-native-demo",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.ts",
   "dependencies": {
-    "@hudiohizari/indonesian-location-autocomplete-core": "1.0.4",
-    "@hudiohizari/indonesian-location-autocomplete": "1.0.4",
+    "@hudiohizari/indonesian-location-autocomplete-core": "1.0.5",
+    "@hudiohizari/indonesian-location-autocomplete": "1.0.5",
     "expo": "~54.0.0",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
